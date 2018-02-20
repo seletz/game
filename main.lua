@@ -1,41 +1,28 @@
 dbg = require 'libraries/mobdebug/mobdebug'
 Input = require 'libraries/input/Input'
 Object = require 'libraries/classic/classic'
-io.stdout:setvbuf("no")
 
+utils = require 'utils'
 lurker = require 'libraries/lurker/lurker'
+
+------------------------------------------------------------------------------
+-- GLOBAL INITS
+io.stdout:setvbuf("no")
 lurker.interval = 0.25
 
-function recursiveEnumerate(folder, file_list)
-    local items = love.filesystem.getDirectoryItems(folder)
-    for _, item in ipairs(items) do
-        local file = folder .. '/' .. item
-        if love.filesystem.isFile(file) then
-            table.insert(file_list, file)
-        elseif love.filesystem.isDirectory(file) then
-            recursiveEnumerate(file, file_list)
-        end
-    end
-end
+------------------------------------------------------------------------------
+-- GLOBALS
+input = Input()
 
-function requireFiles(files)
-    for _, file in ipairs(files) do
-        local file = file:sub(1, -5)
-        print("require " .. file)
-        require(file)
-    end
-end
+game_state = {
+    current_room = nil,
+}
 
 function love.load()
     local object_files = {}
-    recursiveEnumerate('objects', object_files)
-    requireFiles(object_files)
+    utils.recursiveEnumerate('objects', object_files)
+    utils.requireFiles(object_files)
 
-    hc = HyperCircle(400, 300, 50, 10, 120)
-    print(hc)
-
-    --
-    input = Input()
     input:bind("left", "left")
     input:bind("right", "right")
     input:bind("up", "up")
@@ -45,9 +32,17 @@ end
 function love.update(dt)
     lurker.update()
 
-    hc:update(dt)
+    if game_state.current_room then
+        game_state.current_room:update(dt)
+    end
 end
 
 function love.draw()
-    hc:draw()
+    if game_state.current_room then
+        game_state.current_room:draw()
+    end
+end
+
+function gotoRoom(room_type, ...)
+    game_state.current_room = _G[room_type](...)
 end
