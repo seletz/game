@@ -31,9 +31,7 @@ function love.load()
     recursiveEnumerate('objects', object_files)
     requireFiles(object_files)
 
-    c = Circle(400, 300, 50)
     hc = HyperCircle(400, 300, 50, 10, 120)
-    print(c)
     print(hc)
 
     --
@@ -47,12 +45,9 @@ end
 function love.update(dt)
     lurker.update()
 
-    -- c:update(dt)
     hc:update(dt)
-
 end
 
 function love.draw()
-    c:draw()
     hc:draw()
 end
