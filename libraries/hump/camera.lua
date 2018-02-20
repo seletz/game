@@ -39,10 +39,10 @@ end
 
 function camera.smooth.linear(speed)
 	assert(type(speed) == "number", "Invalid parameter: speed = "..tostring(speed))
-	return function(dx,dy, s)
+	return function(dt,dx,dy, s)
 		-- normalize direction
 		local d = math.sqrt(dx*dx+dy*dy)
-		local dts = math.min((s or speed) * love.timer.getDelta(), d) -- prevent overshooting the goal
+		local dts = math.min((s or speed) * dt, d) -- prevent overshooting the goal
 		if d > 0 then
 			dx,dy = dx/d, dy/d
 		end
@@ -53,8 +53,8 @@ end
 
 function camera.smooth.damped(stiffness)
 	assert(type(stiffness) == "number", "Invalid parameter: stiffness = "..tostring(stiffness))
-	return function(dx,dy, s)
-		local dts = love.timer.getDelta() * (s or stiffness)
+	return function(dt,dx,dy, s)
+		local dts = dt * (s or stiffness)
 		return dx*dts, dy*dts
 	end
 end
@@ -65,7 +65,36 @@ local function new(x,y, zoom, rot, smoother)
 	zoom = zoom or 1
 	rot  = rot or 0
 	smoother = smoother or camera.smooth.none() -- for locking, see below
-	return setmetatable({x = x, y = y, scale = zoom, rot = rot, smoother = smoother}, camera)
+	return setmetatable({x = x, y = y, scale = zoom, rot = rot, smoother = smoother, x_shakes = {}, y_shakes = {}}, camera)
+end
+
+function camera:update(dt)
+    local x_shake_amount, y_shake_amount = 0, 0
+    for i = #self.x_shakes, 1, -1 do
+        self.x_shakes[i]:update(dt)
+        x_shake_amount = x_shake_amount + self.x_shakes[i]:getAmplitude()
+        if not self.x_shakes[i].shaking then table.remove(self.x_shakes, i) end
+    end
+    for i = #self.y_shakes, 1, -1 do
+        self.y_shakes[i]:update(dt)
+        y_shake_amount = y_shake_amount + self.y_shakes[i]:getAmplitude()
+        if not self.y_shakes[i].shaking then table.remove(self.y_shakes, i) end
+    end
+    self:move(x_shake_amount, y_shake_amount)
+end
+
+-- camera shake
+function camera:shake(amplitude, frequency, duration)
+    table.insert(self.x_shakes, Shake(amplitude, frequency, duration*1000))
+    table.insert(self.y_shakes, Shake(amplitude, frequency, duration*1000))
+end
+
+function camera:shakeHorizontal(amplitude, frequency, duration)
+    table.insert(self.x_shakes, Shake(amplitude, frequency, duration*1000))
+end
+
+function camera:shakeVertical(amplitude, frequency, duration)
+    table.insert(self.y_shakes, Shake(amplitude, frequency, duration*1000))
 end
 
 function camera:lookAt(x,y)
@@ -143,7 +172,7 @@ function camera:draw(...)
 end
 
 -- world coordinates to camera coordinates
-function camera:cameraCoords(x,y, ox,oy,w,h)
+function camera:getCameraCoords(x,y, ox,oy,w,h)
 	ox, oy = ox or 0, oy or 0
 	w,h = w or love.graphics.getWidth(), h or love.graphics.getHeight()
 
@@ -155,42 +184,43 @@ function camera:cameraCoords(x,y, ox,oy,w,h)
 end
 
 -- camera coordinates to world coordinates
-function camera:worldCoords(x,y, ox,oy,w,h)
+function camera:getWorldCoords(x,y, sx,sy,ox,oy,w,h)
+    sx, sy = sx or 1, sy or 1
 	ox, oy = ox or 0, oy or 0
 	w,h = w or love.graphics.getWidth(), h or love.graphics.getHeight()
 
 	-- x,y = (((x,y) - center) / self.scale):rotated(-self.rot) + (self.x,self.y)
 	local c,s = cos(-self.rot), sin(-self.rot)
-	x,y = (x - w/2 - ox) / self.scale, (y - h/2 - oy) / self.scale
+	x,y = (x - w/2 - ox) / sx, (y - h/2 - oy) / sy
 	x,y = c*x - s*y, s*x + c*y
 	return x+self.x, y+self.y
 end
 
-function camera:mousePosition(ox,oy,w,h)
+function camera:getMousePosition(sx,sy,ox,oy,w,h)
 	local mx,my = love.mouse.getPosition()
-	return self:worldCoords(mx,my, ox,oy,w,h)
+	return self:getWorldCoords(mx,my, sx,sy,ox,oy,w,h)
 end
 
 -- camera scrolling utilities
-function camera:lockX(x, smoother, ...)
-	local dx, dy = (smoother or self.smoother)(x - self.x, self.y, ...)
+function camera:lockX(dt, x, smoother, ...)
+	local dx, dy = (smoother or self.smoother)(dt, x - self.x, self.y, ...)
 	self.x = self.x + dx
 	return self
 end
 
-function camera:lockY(y, smoother, ...)
-	local dx, dy = (smoother or self.smoother)(self.x, y - self.y, ...)
+function camera:lockY(dt, y, smoother, ...)
+	local dx, dy = (smoother or self.smoother)(dt, self.x, y - self.y, ...)
 	self.y = self.y + dy
 	return self
 end
 
-function camera:lockPosition(x,y, smoother, ...)
-	return self:move((smoother or self.smoother)(x - self.x, y - self.y, ...))
+function camera:lockPosition(dt, x, y, smoother, ...)
+	return self:move((smoother or self.smoother)(dt, x - self.x, y - self.y, ...))
 end
 
-function camera:lockWindow(x, y, x_min, x_max, y_min, y_max, smoother, ...)
+function camera:lockWindow(dt, x, y, x_min, x_max, y_min, y_max, smoother, ...)
 	-- figure out displacement in camera coordinates
-	x,y = self:cameraCoords(x,y)
+	x,y = self:getCameraCoords(x,y)
 	local dx, dy = 0,0
 	if x < x_min then
 		dx = x - x_min
@@ -208,7 +238,7 @@ function camera:lockWindow(x, y, x_min, x_max, y_min, y_max, smoother, ...)
 	dx,dy = (c*dx - s*dy) / self.scale, (s*dx + c*dy) / self.scale
 
 	-- move
-	self:move((smoother or self.smoother)(dx,dy,...))
+	self:move((smoother or self.smoother)(dt,dx,dy,...))
 end
 
 -- the module

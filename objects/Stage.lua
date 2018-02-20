@@ -18,8 +18,7 @@ function Stage:new()
         local x = love.math.random(0,gw)
         local y = love.math.random(0,gh)
         local r = love.math.random(0,gw / 10)
-        local c = self.area:addGameObject('Circle', x, y, {radius = r})
-        self.area:dump()
+        self.area:addGameObject('Circle', x, y, {radius = r})
     end, 10)
 
 end
@@ -32,7 +31,10 @@ end
 function Stage:draw()
     love.graphics.setCanvas(self.main_canvas)
     love.graphics.clear()
+    camera:attach(0, 0, gw, gh)
+    love.graphics.circle('line', gw/2, gh/2, 50)
     self.area:draw()
+    camera:detach()
     love.graphics.setCanvas()
 
     love.graphics.setColor(255, 255, 255, 255)

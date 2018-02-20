@@ -2,6 +2,7 @@ dbg = require 'libraries/mobdebug/mobdebug'
 Input = require 'libraries/input/Input'
 Object = require 'libraries/classic/classic'
 Timer = require 'libraries/hump/timer'
+Camera = require 'libraries/hump/camera'
 
 require 'objects/GameObject'
 
@@ -15,8 +16,7 @@ lurker.interval = 0.25
 
 ------------------------------------------------------------------------------
 -- GLOBALS
-input = Input()
-
+camera = Camera()
 game_state = {
     current_room = nil,
 }
@@ -31,6 +31,14 @@ function love.load()
     utils.recursiveEnumerate('objects', object_files)
     utils.requireFiles(object_files)
 
+    -- this only works if initialized here . :??
+    input = Input()
+
+    input:bind('x', function()
+        print("BOOOOOM!")
+        camera:shake(4, 60, 1)
+    end)
+
     input:bind("left", "left")
     input:bind("right", "right")
     input:bind("up", "up")
@@ -42,7 +50,8 @@ function love.load()
 end
 
 function love.update(dt)
-    lurker.update()
+    -- lurker.update()
+    camera:update(dt)
 
     if game_state.current_room then
         game_state.current_room:update(dt)
