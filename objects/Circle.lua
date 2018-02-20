@@ -12,6 +12,10 @@ Circle.segments = 100
 
 function Circle:update(dt)
     self.super.update(self, dt)
+
+    self.timer:after(love.math.random(2,4), function()
+        self.dead = true
+    end)
 end
 
 function Circle:draw()

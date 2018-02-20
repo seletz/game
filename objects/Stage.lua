@@ -10,12 +10,20 @@ Stage = Object:extend()
 
 function Stage:new()
     self.area = Area(self)
+    self.timer = Timer()
 
-    self.area:addGameObject('Circle', 400, 300, {radius = 50})
-    self.area:dump()
+    self.timer:every(0.3, function()
+        local x = love.math.random(0,800)
+        local y = love.math.random(0,600)
+        local r = love.math.random(0,50)
+        local c = self.area:addGameObject('Circle', x, y, {radius = r})
+        self.area:dump()
+    end, 10)
+
 end
 
 function Stage:update(dt)
+    self.timer:update(dt)
     self.area:update(dt)
 end
 
