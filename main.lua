@@ -21,6 +21,11 @@ game_state = {
     current_room = nil,
 }
 
+function resize(s)
+    love.window.setMode(s*gw, s*gh)
+    sx, sy = s, s
+end
+
 function love.load()
     local object_files = {}
     utils.recursiveEnumerate('objects', object_files)
@@ -31,6 +36,8 @@ function love.load()
     input:bind("up", "up")
     input:bind("down", "down")
 
+    love.graphics.setDefaultFilter("nearest")
+    resize(2)
     gotoRoom("Stage")
 end
 
