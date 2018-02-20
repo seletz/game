@@ -6,26 +6,21 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-Circle = Object:extend()
+Circle = GameObject:extend()
 
 Circle.segments = 100
 
-function Circle:new(x, y, radius)
-    self.x = x
-    self.y = y
-    self.radius = radius
-    self.creation_time = love.timer.getDelta()
-end
-
 function Circle:update(dt)
+    self.super.update(self, dt)
 end
 
 function Circle:draw()
+    self.super.draw()
     love.graphics.circle("fill", self.x, self.y, self.radius, Circle.segments)
 end
 
 function Circle:__tostring()
-    return "Circle( " .. self.creation_time .. " r=" .. self.radius .. " @ " .. self.x .. ", " .. self.y .. " )"
+    return "Circle( " .. self.id .. " r=" .. self.radius .. " @ " .. self.x .. ", " .. self.y .. " )"
 end
 
 return Circle

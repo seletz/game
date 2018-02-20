@@ -1,6 +1,9 @@
 dbg = require 'libraries/mobdebug/mobdebug'
 Input = require 'libraries/input/Input'
 Object = require 'libraries/classic/classic'
+Timer = require 'libraries/hump/timer'
+
+require 'objects/GameObject'
 
 utils = require 'utils'
 lurker = require 'libraries/lurker/lurker'
@@ -27,6 +30,8 @@ function love.load()
     input:bind("right", "right")
     input:bind("up", "up")
     input:bind("down", "down")
+
+    gotoRoom("Stage")
 end
 
 function love.update(dt)

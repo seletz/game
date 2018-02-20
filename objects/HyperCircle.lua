@@ -17,8 +17,6 @@ function HyperCircle:new(x, y, radius, line_width, outer_radius)
     self.line_width = line_width
     self.outer_radius = outer_radius
 
-    self.timer = Timer()
-
     local period = 0.25
 
     self.timer:script(function(wait)
@@ -32,7 +30,7 @@ function HyperCircle:new(x, y, radius, line_width, outer_radius)
 end
 
 function HyperCircle:update(dt)
-    self.timer:update(dt)
+    self.super.update(self, dt)
 
     if input:down("left") then
         self.x = self.x - 1
