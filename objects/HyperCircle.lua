@@ -8,27 +8,38 @@
 
 HyperCircle = Circle:extend()
 
+local Timer = require 'libraries/hump/timer'
+
 
 function HyperCircle:new(x, y, radius, line_width, outer_radius)
     HyperCircle.super.new(self, x, y, radius)
 
     self.line_width = line_width
     self.outer_radius = outer_radius
+
+    self.timer = Timer()
+
+    local period = 0.25
+
+    self.timer:script(function(wait)
+        while true do
+            self.timer:tween(period, self, {line_width = line_width * 1.1}, "in-out-quad")
+            wait(period)
+            self.timer:tween(period, self, {line_width = line_width *0.9}, "in-out-quad")
+            wait(period)
+        end
+    end)
 end
 
 function HyperCircle:update(dt)
+    self.timer:update(dt)
+
     if input:down("left") then
         self.x = self.x - 1
     end
     if input:down("right") then
         self.x = self.x + 1
     end
-
-    if input:sequence("right", 0.5, "left", 0.5, "right") then
-        self.line_width = self.line_width * 2
-        print("lw combo: " .. self.line_width)
-    end
-
 end
 
 function HyperCircle:draw()
