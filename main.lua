@@ -1,8 +1,10 @@
 dbg = require 'libraries/mobdebug/mobdebug'
+Input = require 'libraries/input/Input'
 Object = require 'libraries/classic/classic'
 io.stdout:setvbuf("no")
 
-
+lurker = require 'libraries/lurker/lurker'
+lurker.interval = 0.25
 
 function recursiveEnumerate(folder, file_list)
     local items = love.filesystem.getDirectoryItems(folder)
@@ -33,9 +35,18 @@ function love.load()
     hc = HyperCircle(400, 300, 50, 10, 120)
     print(c)
     print(hc)
+
+    --
+    input = Input()
+    input:bind("left", "left")
+    input:bind("right", "right")
+    input:bind("up", "up")
+    input:bind("down", "down")
 end
 
 function love.update(dt)
+    lurker.update()
+
     -- c:update(dt)
     hc:update(dt)
 
