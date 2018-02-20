@@ -16,6 +16,21 @@ function HyperCircle:new(x, y, radius, line_width, outer_radius)
     self.outer_radius = outer_radius
 end
 
+function HyperCircle:update(dt)
+    if input:down("left") then
+        self.x = self.x - 1
+    end
+    if input:down("right") then
+        self.x = self.x + 1
+    end
+
+    if input:sequence("right", 0.5, "left", 0.5, "right") then
+        self.line_width = self.line_width * 2
+        print("lw combo: " .. self.line_width)
+    end
+
+end
+
 function HyperCircle:draw()
     self.super.draw(self)
     love.graphics.setLineWidth( self.line_width )
