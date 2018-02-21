@@ -7,15 +7,18 @@ Timer = require 'libraries/hump/timer'
 Camera = require 'libraries/hump/camera'
 Physics = require 'libraries/windfield'
 lurker = require 'libraries/lurker/lurker'
+Draft = require 'libraries/draft/draft'
 
 ------------------------------------------------------------------------------
 -- GAME LIBRARIES
 require 'objects/GameObject'
 utils = require 'utils'
+colors = require 'colors'
 
 ------------------------------------------------------------------------------
 -- GLOBALS
 camera = Camera()
+draft = Draft()
 
 ------------------------------------------------------------------------------
 -- GLOBAL INITS

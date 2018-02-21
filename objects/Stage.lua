@@ -23,6 +23,10 @@ function Stage:new()
         self.area:addGameObject('Circle', x, y, {radius = r})
     end, 10)]]
 
+    input:bind('p', function()
+        self.area:addGameObject('Ammo', utils.random(0, gw), utils.random(0, gh))
+    end)
+
 end
 
 function Stage:destroy()

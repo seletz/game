@@ -21,6 +21,11 @@ function GameObject:new(area, x, y, opts)
     self.id = utils.UUID()
     self.dead = false
     self.timer = Timer()
+
+    self.creation_time = love.timer.getTime()
+
+    -- z-index
+    self.depth = 50
 end
 
 function GameObject:destroy()
