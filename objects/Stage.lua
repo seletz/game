@@ -25,6 +25,11 @@ function Stage:new()
 
 end
 
+function Stage:destroy()
+    self.area:destroy()
+    self.area = nil
+end
+
 function Stage:update(dt)
     self.timer:update(dt)
 

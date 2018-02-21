@@ -42,6 +42,47 @@ function utils.random(min, max)
     return (min > max and (love.math.random()*(min - max) + max)) or (love.math.random()*(max - min) + min)
 end
 
+function utils.count_all(f)
+    local seen = {}
+    local count_table
+    count_table = function(t)
+        if seen[t] then return end
+        f(t)
+        seen[t] = true
+        for k,v in pairs(t) do
+            if type(v) == "table" then
+                count_table(v)
+            elseif type(v) == "userdata" then
+                f(v)
+            end
+        end
+    end
+    count_table(_G)
+end
+
+function utils.type_count()
+    local counts = {}
+    local enumerate = function (o)
+        local t = utils.type_name(o)
+        counts[t] = (counts[t] or 0) + 1
+    end
+    utils.count_all(enumerate)
+    return counts
+end
+
+
+utils._type_table = nil
+function utils.type_name(o)
+    if utils._type_table == nil then
+        utils._type_table = {}
+        for k,v in pairs(_G) do
+            utils._type_table[v] = k
+        end
+        utils._type_table[0] = "table"
+    end
+    return utils._type_table[getmetatable(o) or 0] or "Unknown"
+end
+
 return utils
 
 

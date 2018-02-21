@@ -55,6 +55,28 @@ function love.load()
     input:bind("up", "up")
     input:bind("down", "down")
 
+    input:bind("f1", function()
+        print("------------------------------------------------------------")
+        print("Before collection: " .. collectgarbage("count")/1024)
+        collectgarbage()
+        print("After collection: " .. collectgarbage("count")/1024)
+        print("Object count: ")
+        local counts = utils.type_count()
+        for k, v in pairs(counts) do print(k, v) end
+        print("------------------------------------------------------------")
+    end)
+
+    input:bind("f2", function()
+        gotoRoom("Stage")
+    end)
+
+    input:bind("f3", function()
+        if current_room and current_room.destroy then
+            print("kill current room ...")
+            current_room:destroy()
+        end
+    end)
+
     love.graphics.setDefaultFilter("nearest")
     resize(2)
     gotoRoom("Stage")
@@ -76,5 +98,6 @@ function love.draw()
 end
 
 function gotoRoom(room_type, ...)
+    if current_room and current_room.destroy then current_room:destroy() end
     game_state.current_room = _G[room_type](...)
 end

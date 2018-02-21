@@ -13,13 +13,29 @@ function Area:new(room)
     self.game_objects = {}
 end
 
+function Area:destroy()
+    for i = #self.game_objects, 1, -1 do
+        game_object:destroy()
+    end
+
+    self.game_objects = {}
+    if self.world then
+        self.world:destroy()
+        self.world = nil
+    end
+
+end
+
 function Area:update(dt)
     if self.world then self.world:update(dt) end
 
     for i = #self.game_objects, 1, -1 do
         local game_object = self.game_objects[i]
         game_object:update(dt)
-        if game_object.dead then table.remove(self.game_objects, i) end
+        if game_object.dead then
+            game_object:destroy()
+            table.remove(self.game_objects, i)
+        end
     end
 end
 

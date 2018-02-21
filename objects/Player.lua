@@ -23,6 +23,10 @@ function Player:new(area, x, y, opts)
     self.a = 100
 end
 
+function Player:destroy()
+    Player.super.destroy(self)
+end
+
 function Player:update(dt)
     Player.super.update(self, dt)
 
