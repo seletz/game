@@ -21,10 +21,17 @@ function Stage:new()
         self.area:addGameObject('Circle', x, y, {radius = r})
     end, 10)
 
+    camera.smoother = Camera.smooth.damped(5)
+
 end
 
 function Stage:update(dt)
     self.timer:update(dt)
+
+    camera:lockPosition(dt, gw/2, gh/2)
+
+    self.area:update(dt)
+
     self.area:update(dt)
 end
 
