@@ -61,7 +61,7 @@ function love.load()
 end
 
 function love.update(dt)
-    -- lurker.update()
+    lurker.update()
     camera:update(dt)
 
     if game_state.current_room then
