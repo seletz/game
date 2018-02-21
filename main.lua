@@ -1,25 +1,36 @@
+------------------------------------------------------------------------------
+-- LIBRARIES
 dbg = require 'libraries/mobdebug/mobdebug'
 Input = require 'libraries/input/Input'
 Object = require 'libraries/classic/classic'
 Timer = require 'libraries/hump/timer'
 Camera = require 'libraries/hump/camera'
-
-require 'objects/GameObject'
-
-utils = require 'utils'
+Physics = require 'libraries/windfield'
 lurker = require 'libraries/lurker/lurker'
 
 ------------------------------------------------------------------------------
--- GLOBAL INITS
-io.stdout:setvbuf("no")
-lurker.interval = 0.25
+-- GAME LIBRARIES
+require 'objects/GameObject'
+utils = require 'utils'
 
 ------------------------------------------------------------------------------
 -- GLOBALS
 camera = Camera()
+
+------------------------------------------------------------------------------
+-- GLOBAL INITS
+
+-- no buffering for stdouti please
+io.stdout:setvbuf("no")
+camera.smoother = Camera.smooth.damped(5)
+lurker.interval = 0.25
+
 game_state = {
     current_room = nil,
 }
+
+------------------------------------------------------------------------------
+-- FUNCTIONS
 
 function resize(s)
     love.window.setMode(s*gw, s*gh)

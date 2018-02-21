@@ -9,11 +9,13 @@
 Stage = Object:extend()
 
 function Stage:new()
-    self.area = Area(self)
     self.main_canvas = love.graphics.newCanvas(gw, gh)
 
     self.timer = Timer()
 
+    self.area = Area(self)
+    self.area:addPhysicsWorld()
+    self.area:addGameObject('Player', gw/2, gh/2)
 --[[    self.timer:every(0.3, function()
         local x = love.math.random(0,gw)
         local y = love.math.random(0,gh)
@@ -21,9 +23,6 @@ function Stage:new()
         self.area:addGameObject('Circle', x, y, {radius = r})
     end, 10)]]
 
-    camera.smoother = Camera.smooth.damped(5)
-
-    self.area:addGameObject('Player', gw/2, gh/2)
 end
 
 function Stage:update(dt)
