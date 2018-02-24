@@ -17,6 +17,35 @@ function Player:new(area, x, y, opts)
     self.collider:setObject(self)
     self.collider:setCollisionClass('Player')
 
+    self.ship = 'Fighter'
+    self.polygons = {}
+
+    if self.ship == 'Fighter' then
+        self.polygons[1] = {
+            self.w, 0, -- 1
+            self.w/2, -self.w/2, -- 2
+            -self.w/2, -self.w/2, -- 3
+            -self.w, 0, -- 4
+            -self.w/2, self.w/2, -- 5
+            self.w/2, self.w/2, -- 6
+        }
+
+        self.polygons[2] = {
+            self.w/2, -self.w/2, -- 7
+            0, -self.w, -- 8
+            -self.w - self.w/2, -self.w, -- 9
+            -3*self.w/4, -self.w/4, -- 10
+            -self.w/2, -self.w/2, -- 11
+        }
+
+        self.polygons[3] = {
+            self.w/2, self.w/2, -- 12
+            -self.w/2, self.w/2, -- 13
+            -3*self.w/4, self.w/4, -- 14
+            -self.w - self.w/2, self.w, -- 15
+            0, self.w, -- 16
+        }
+    end
 
     self.r = -math.pi/2
     self.rv = 1.66*math.pi
@@ -27,9 +56,20 @@ function Player:new(area, x, y, opts)
 
     self.trail_color = colors.trail_color
     self.timer:every(0.01, function()
-        self.area:addGameObject('TrailParticle',
-            self.x - self.w*math.cos(self.r), self.y - self.h*math.sin(self.r),
-            {parent = self, r = utils.random(2, 4), d = utils.random(0.15, 0.25), color = self.trail_color})
+        if self.ship == 'Fighter' then
+            self.area:addGameObject('TrailParticle',
+                self.x - 0.9*self.w*math.cos(self.r) + 0.2*self.w*math.cos(self.r - math.pi/2),
+                self.y - 0.9*self.w*math.sin(self.r) + 0.2*self.w*math.sin(self.r - math.pi/2),
+                {parent = self, r = utils.random(2, 4), d = utils.random(0.15, 0.25), color = self.trail_color})
+            self.area:addGameObject('TrailParticle',
+                self.x - 0.9*self.w*math.cos(self.r) + 0.2*self.w*math.cos(self.r + math.pi/2),
+                self.y - 0.9*self.w*math.sin(self.r) + 0.2*self.w*math.sin(self.r + math.pi/2),
+                {parent = self, r = utils.random(2, 4), d = utils.random(0.15, 0.25), color = self.trail_color})
+        else
+            self.area:addGameObject('TrailParticle',
+                self.x - self.w*math.cos(self.r), self.y - self.h*math.sin(self.r),
+                {parent = self, r = utils.random(2, 4), d = utils.random(0.15, 0.25), color = self.trail_color})
+        end
     end)
 
     self.timer:every(0.24, function()
@@ -128,8 +168,24 @@ function Player:update(dt)
 end
 
 function Player:draw()
-    love.graphics.circle('line', self.x, self.y, self.w)
-    love.graphics.line(self.x, self.y, self.x + self.w*math.cos(self.r), self.y + self.w*math.sin(self.r))
+    --love.graphics.circle('line', self.x, self.y, self.w)
+    --love.graphics.line(self.x, self.y, self.x + self.w*math.cos(self.r), self.y + self.w*math.sin(self.r))
+
+    utils.pushRotate(self.x, self.y, self.r)
+    love.graphics.setColor(colors.default_color)
+
+    for _, polygon in ipairs(self.polygons) do
+        local points = fn.map(polygon, function(k, v)
+            if k % 2 == 1 then
+                return self.x + v + utils.random(-1, 1)
+            else
+                return self.y + v + utils.random(-1, 1)
+            end
+        end)
+        love.graphics.polygon('line', points)
+    end
+
+    love.graphics.pop()
 
     love.graphics.print(
         string.format("HP %2d AM %2d BST %2d V %2d ", self.hp, self.ammo, self.boost, self.v),

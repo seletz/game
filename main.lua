@@ -9,6 +9,7 @@ Vector = require 'libraries/hump/vector'
 Physics = require 'libraries/windfield'
 lurker = require 'libraries/lurker/lurker'
 Draft = require 'libraries/draft/draft'
+fn = require 'libraries/moses/moses'
 
 ------------------------------------------------------------------------------
 -- GAME LIBRARIES
