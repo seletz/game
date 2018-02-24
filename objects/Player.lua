@@ -25,8 +25,19 @@ function Player:new(area, x, y, opts)
     self.max_v = self.base_max_v
     self.a = 100
 
+    self.trail_color = colors.trail_color
+    self.timer:every(0.01, function()
+        self.area:addGameObject('TrailParticle',
+            self.x - self.w*math.cos(self.r), self.y - self.h*math.sin(self.r),
+            {parent = self, r = utils.random(2, 4), d = utils.random(0.15, 0.25), color = self.trail_color})
+    end)
+
     self.timer:every(0.24, function()
         self:shoot()
+    end)
+
+    self.timer:every(5, function()
+        self:tick()
     end)
 
     -- Stats
@@ -60,6 +71,9 @@ function Player:shoot()
         self.x + 1.5*d*math.cos(self.r),
         self.y + 1.5*d*math.sin(self.r),
         {r = self.r})
+end
+
+function Player:tick()
 end
 
 function Player:die()

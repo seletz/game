@@ -22,7 +22,8 @@ colors.background_color = {16, 16, 16}
 colors.ammo_color = {123, 200, 164}
 colors.boost_color = {76, 195, 217}
 colors.hp_color = {241, 103, 69}
-colors.skill_point_color = {255, 198, 93}
+colors.skill_point_color = {255, 198, 93 }
+colors.trail_color = colors.yellow
 
 return colors
 
