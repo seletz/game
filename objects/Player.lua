@@ -55,6 +55,11 @@ function Player:shoot()
         self.x + d*math.cos(self.r),
         self.y + d*math.sin(self.r),
         {player = self, d = d})
+
+    self.area:addGameObject('Projectile',
+        self.x + 1.5*d*math.cos(self.r),
+        self.y + 1.5*d*math.sin(self.r),
+        {r = self.r})
 end
 
 function Player:update(dt)
