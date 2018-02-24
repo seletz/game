@@ -17,8 +17,10 @@ colors.magenta = {255, 0, 255, 255 }
 colors.yellow = {255, 255, 0, 255 }
 colors.black = {0, 0, 0, 255 }
 
-colors.default_color    = colors.white
-colors.ammo_color       = colors.cyan
+colors.default_color        = colors.white
+colors.ammo_color           = colors.cyan
+colors.skill_point_color    = colors.yellow
+colors.boost_color          = colors.cyan
 
 return colors
 
