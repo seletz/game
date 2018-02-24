@@ -25,6 +25,10 @@ function Player:new(area, x, y, opts)
     self.max_v = self.base_max_v
     self.a = 100
 
+    self.timer:every(0.24, function()
+        self:shoot()
+    end)
+
     -- Stats
 
     self.max_boost = 100
@@ -42,6 +46,15 @@ end
 
 function Player:destroy()
     Player.super.destroy(self)
+end
+
+function Player:shoot()
+    local d = 1.2*self.w
+
+    self.area:addGameObject('ShootEffect',
+        self.x + d*math.cos(self.r),
+        self.y + d*math.sin(self.r),
+        {player = self, d = d})
 end
 
 function Player:update(dt)
