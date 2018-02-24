@@ -15,6 +15,8 @@ function Player:new(area, x, y, opts)
     self.w, self.h = 12, 12
     self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     self.collider:setObject(self)
+    self.collider:setCollisionClass('Player')
+
 
     self.r = -math.pi/2
     self.rv = 1.66*math.pi

@@ -15,7 +15,17 @@ function Stage:new()
 
     self.area = Area(self)
     self.area:addPhysicsWorld()
-    self.area:addGameObject('Player', gw/2, gh/2)
+
+
+    -- Projectile will ignore Projectile
+    -- Collectable will ignore Collectable
+    -- Collectable will ignore Projectile
+    -- Player will generate collision events with Collectable
+    self.area.world:addCollisionClass('Player')
+    self.area.world:addCollisionClass('Projectile', {ignores = {'Projectile'}})
+    self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
+
+    self.player = self.area:addGameObject('Player', gw/2, gh/2)
 --[[    self.timer:every(0.3, function()
         local x = love.math.random(0,gw)
         local y = love.math.random(0,gh)

@@ -29,7 +29,17 @@ end
 
 function Ammo:update(dt)
     Ammo.super.update(self, dt)
-    self.collider:setLinearVelocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
+
+    local target = game_state.current_room.player
+    if target then
+        local projectile_heading = Vector(self.collider:getLinearVelocity()):normalized()
+        local angle = math.atan2(target.y - self.y, target.x - self.x)
+        local to_target_heading = Vector(math.cos(angle), math.sin(angle)):normalized()
+        local final_heading = (projectile_heading + 0.1*to_target_heading):normalized()
+        self.collider:setLinearVelocity(self.v*final_heading.x, self.v*final_heading.y)
+    else
+        self.collider:setLinearVelocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
+    end
 end
 
 function Ammo:draw()
