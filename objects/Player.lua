@@ -114,6 +114,7 @@ function Player:shoot()
 end
 
 function Player:tick()
+    self.area:addGameObject('TickEffect', self.x, self.y, {parent = self})
 end
 
 function Player:die()
