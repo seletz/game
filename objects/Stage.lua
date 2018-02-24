@@ -27,15 +27,13 @@ function Stage:new()
     -- self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
---[[    self.timer:every(0.3, function()
-        local x = love.math.random(0,gw)
-        local y = love.math.random(0,gh)
-        local r = love.math.random(0,gw / 10)
-        self.area:addGameObject('Circle', x, y, {radius = r})
-    end, 10)]]
 
     input:bind('p', function()
         self.area:addGameObject('Ammo', utils.random(0, gw), utils.random(0, gh))
+    end)
+
+    input:bind('f4', function()
+        self.player:die()
     end)
 
 end

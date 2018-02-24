@@ -20,6 +20,7 @@ colors = require 'colors'
 -- GLOBALS
 camera = Camera()
 draft = Draft()
+timer = Timer()
 
 ------------------------------------------------------------------------------
 -- GLOBAL INITS
@@ -31,6 +32,8 @@ lurker.interval = 0.25
 
 game_state = {
     current_room = nil,
+    flash_frames = nil,
+    slow_amount = 1,
 }
 
 ------------------------------------------------------------------------------
@@ -87,7 +90,12 @@ function love.load()
 end
 
 function love.update(dt)
+    local slow_amount = game_state.slow_amount
+    local dt = dt * slow_amount
+
     lurker.update()
+
+    timer:update(dt)
     camera:update(dt)
 
     if game_state.current_room then
@@ -96,12 +104,38 @@ function love.update(dt)
 end
 
 function love.draw()
-    if game_state.current_room then
-        game_state.current_room:draw()
+    local flash_frames = game_state.flash_frames
+    local current_room = game_state.current_room
+
+    if current_room then
+        current_room:draw()
     end
+
+    if flash_frames then
+        flash_frames = flash_frames - 1
+        if flash_frames == -1 then flash_frames = nil end
+    end
+    if flash_frames then
+        love.graphics.setColor(colors.background_color)
+        love.graphics.rectangle('fill', 0, 0, sx*gw, sy*gh)
+        love.graphics.setColor(255, 255, 255)
+    end
+
+    game_state.flash_frames = flash_frames
+end
+
+function flash(frames)
+    game_state.flash_frames = frames
+end
+
+function slow(amount, duration)
+    game_state.slow_amount = amount
+    timer:tween(duration, game_state, {slow_amount = 1}, 'in-out-cubic')
 end
 
 function gotoRoom(room_type, ...)
+    local current_room = game_state.current_room
     if current_room and current_room.destroy then current_room:destroy() end
+
     game_state.current_room = _G[room_type](...)
 end

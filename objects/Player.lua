@@ -62,6 +62,17 @@ function Player:shoot()
         {r = self.r})
 end
 
+function Player:die()
+    self.dead = true
+    flash(4)
+    camera:shake(6, 60, 0.4)
+    slow(0.15, 1)
+
+    for i = 1, love.math.random(8, 12) do
+        self.area:addGameObject('ExplodeParticle', self.x, self.y)
+    end
+end
+
 function Player:update(dt)
     Player.super.update(self, dt)
 
