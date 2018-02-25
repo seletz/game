@@ -27,6 +27,14 @@ function Rock:new(area, x, y, opts)
     self.v = -direction*utils.random(20, 40)
     self.collider:setLinearVelocity(self.v, 0)
     self.collider:applyAngularImpulse(utils.random(-100, 100))
+
+    -- effects
+
+    self.hit_flash = false
+
+    -- stats
+
+    self.hp = opts.hp or 100
 end
 
 function Rock:destroy()
@@ -40,12 +48,29 @@ function Rock:die()
     end
 end
 
+function Rock:hit(damage)
+    local damage = damage or 100
+
+    self.hp = self.hp - damage
+
+    if self.hp <= 0 then
+        self:die()
+    else
+        self.hit_flash = true
+        self.timer:after(0.2, function() self.hit_flash = false end)
+    end
+end
+
 function Rock:update(dt)
     Rock.super.update(self, dt)
 end
 
 function Rock:draw()
-    love.graphics.setColor(self.color)
+    if self.hit_flash then
+        love.graphics.setColor(colors.default_color)
+    else
+        love.graphics.setColor(self.color)
+    end
     local points = {self.collider:getWorldPoints(self.collider.shapes.main:getPoints())}
     love.graphics.polygon('line', points)
     love.graphics.setColor(colors.default_color)

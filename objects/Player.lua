@@ -20,6 +20,7 @@ function Player:new(area, x, y, opts)
     self.collider:setObject(self)
     self.collider:setCollisionClass('Player')
 
+    self.visible = true
     self.ship = 'Fighter'
     self.polygons = {}
 
@@ -83,6 +84,8 @@ function Player:new(area, x, y, opts)
     end)
 
     -- Stats
+
+    self.invincible = false
 
     self.shoot_timer = 0
     self.shoot_cooldown = SHOOT_RATE
@@ -179,9 +182,40 @@ function Player:die()
     flash(4)
     camera:shake(6, 60, 0.4)
     slow(0.15, 1)
+    self:brzzt()
+end
 
-    for i = 1, love.math.random(8, 12) do
+function Player:brzzt(a, b)
+    for i = 1, love.math.random(a or 8, b or 12) do
         self.area:addGameObject('ExplodeParticle', self.x, self.y)
+    end
+end
+
+function Player:hit(damage)
+    local damage = damage or 10
+    if self.invincible then return end
+
+    print("P: hit " .. damage)
+
+    self:brzzt()
+    self:addHP(-damage)
+
+    if damage >= 30 then
+        self.invincible = true
+        print("P: +invincible")
+        self.timer:every(0.2, function() self.visible = not self.visible end, 9)
+        self.timer:after(2, function()
+            self.invincible = false
+            self.visible = true
+            print("P: -invincible")
+        end)
+        camera:shake(6, 60, 0.2)
+        slow(0.25, 0.5)
+        flash(3)
+    else
+        flash(2)
+        camera:shake(6, 60, 0.1)
+        slow(0.75, 0.25)
     end
 end
 
@@ -254,6 +288,10 @@ function Player:update(dt)
             object:die()
         end
     end
+
+    if self.collider:enter('Enemy') then
+        self:hit(30)
+    end
 end
 
 function Player:setAttack(attack)
@@ -281,12 +319,12 @@ function Player:addHP(amount)
     self.hp = math.min(self.hp + amount, self.max_hp)
     if self.hp < 0 then
         self.hp = 0
+        self:die()
     end
 end
 
 function Player:draw()
-    --love.graphics.circle('line', self.x, self.y, self.w)
-    --love.graphics.line(self.x, self.y, self.x + self.w*math.cos(self.r), self.y + self.w*math.sin(self.r))
+    if not self.visible then return end
 
     utils.pushRotate(self.x, self.y, self.r)
     love.graphics.setColor(colors.default_color)
