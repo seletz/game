@@ -10,6 +10,7 @@ TickEffect = GameObject:extend()
 
 function TickEffect:new(area, x, y, opts)
     TickEffect.super.new(self, area, x, y, opts)
+    self.depth = 75
 
     self.w, self.h = 48, 32
     self.y_offset = 0

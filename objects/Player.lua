@@ -102,6 +102,9 @@ end
 function Player:shoot()
     local d = 1.2*self.w
 
+    if self.ammo > 0 then
+        self.ammo = self.ammo - 1
+
     self.area:addGameObject('ShootEffect',
         self.x + d*math.cos(self.r),
         self.y + d*math.sin(self.r),
@@ -111,6 +114,7 @@ function Player:shoot()
         self.x + 1.5*d*math.cos(self.r),
         self.y + 1.5*d*math.sin(self.r),
         {r = self.r})
+    end
 end
 
 function Player:tick()
@@ -166,6 +170,19 @@ function Player:update(dt)
     --
     self.v = math.min(self.v + self.a*dt, self.max_v)
     self.collider:setLinearVelocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
+
+    if self.collider:enter('Collectable') then
+        local collision_data = self.collider:getEnterCollisionData('Collectable')
+        local object = collision_data.collider:getObject()
+        if object:is(Ammo) then
+            object:die()
+            self:addAmmo(5)
+        end
+    end
+end
+
+function Player:addAmmo(amount)
+    self.ammo = math.min(self.ammo + amount, self.max_ammo)
 end
 
 function Player:draw()

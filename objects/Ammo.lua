@@ -28,6 +28,15 @@ function Ammo:destroy()
     Ammo.super.destroy(self)
 end
 
+function Ammo:die()
+    self.dead = true
+    self.area:addGameObject('AmmoEffect', self.x, self.y,
+        {color = colors.ammo_color, w = self.w, h = self.h, r = self.r})
+    for i = 1, love.math.random(4, 8) do
+        self.area:addGameObject('ExplodeParticle', self.x, self.y, {s = 3, color = colors.ammo_color})
+    end
+end
+
 function Ammo:update(dt)
     Ammo.super.update(self, dt)
 
