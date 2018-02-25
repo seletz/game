@@ -11,6 +11,8 @@ lurker = require 'libraries/lurker/lurker'
 Draft = require 'libraries/draft/draft'
 fn = require 'libraries/moses/moses'
 
+require 'libraries/utf8/utf8'
+
 ------------------------------------------------------------------------------
 -- GAME LIBRARIES
 require 'objects/GameObject'
@@ -107,6 +109,7 @@ function love.update(dt)
 end
 
 function love.draw()
+    love.graphics.setFont(fonts.ARCADECLASSIC)
     local flash_frames = game_state.flash_frames
     local current_room = game_state.current_room
 

@@ -22,7 +22,7 @@ end
 
 function utils.requireFiles(files)
     for _, file in ipairs(files) do
-        local file = file:sub(1, -5)
+        local file = utils.removeext(file)
         print("require " .. file)
         require(file)
     end
@@ -30,6 +30,10 @@ end
 
 function utils.splitpath(p)
     return string.match(p, "(.-)([^\\/]-%.?([^%.\\/]*))$")
+end
+
+function utils.removeext(p)
+    return p:sub(1, -5)
 end
 
 function utils.loadFonts()
@@ -42,7 +46,7 @@ function utils.loadFonts()
         local _, fname, ext = utils.splitpath(file)
         if ext and string.match(ext, "ttf") then
             print("font: " .. fname)
-            table[fname] = love.graphics.newFont(file)
+            fonts[utils.removeext(fname)] = love.graphics.newFont(file)
         end
     end
 
@@ -90,7 +94,7 @@ function utils.count_all(f)
         if seen[t] then return end
         f(t)
         seen[t] = true
-        for k,v in pairs(t) do
+        for _,v in pairs(t) do
             if type(v) == "table" then
                 count_table(v)
             elseif type(v) == "userdata" then
