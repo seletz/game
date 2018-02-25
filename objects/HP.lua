@@ -18,7 +18,7 @@ function HP:new(area, x, y, opts)
     self.color = opts.color or colors.hp_color
 
     self.s = 14
-    self.si = self.s - 5
+    self.si = self.s - 6
     self.collider = self.area.world:newCircleCollider(self.x, self.y, self.s)
     self.collider:setObject(self)
     self.collider:setCollisionClass('Collectable')
