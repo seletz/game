@@ -48,6 +48,26 @@ function Stage:new()
         self.player:die()
     end)
 
+    input:bind('1', function()
+        self.player:setAttack("Neutral")
+    end)
+
+    input:bind('2', function()
+        self.player:setAttack("Double")
+    end)
+
+    input:bind('3', function()
+        self.player:setAttack("Triple")
+    end)
+
+    input:bind('4', function()
+        self.player:setAttack("Rapid")
+    end)
+
+    input:bind('5', function()
+        self.player:setAttack("Spread")
+    end)
+
 end
 
 function Stage:destroy()

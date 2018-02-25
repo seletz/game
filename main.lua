@@ -37,6 +37,13 @@ game_state = {
     current_room = nil,
     flash_frames = nil,
     slow_amount = 1,
+    attacks = {
+        ['Neutral']     = {cooldown = 0.24, ammo = 0, abbreviation = 'N', color = colors.default_color},
+        ['Double']      = {cooldown = 0.32, ammo = 2, abbreviation = '2', color = colors.ammo_color},
+        ['Triple']      = {cooldown = 0.32, ammo = 3, abbreviation = '3', color = colors.boost_color},
+        ['Rapid']       = {cooldown = 0.12, ammo = 1, abbreviation = 'R', color = colors.default_color },
+        ['Spread']      = {cooldown = 0.16, ammo = 1, abbreviation = 'RS', color = colors.default_color},
+    }
 }
 
 ------------------------------------------------------------------------------

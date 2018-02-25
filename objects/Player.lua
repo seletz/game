@@ -23,6 +23,9 @@ function Player:new(area, x, y, opts)
     self.ship = 'Fighter'
     self.polygons = {}
 
+    self:setAttack('Double')
+
+
     if self.ship == 'Fighter' then
         self.polygons[1] = {
             self.w, 0, -- 1
@@ -75,15 +78,14 @@ function Player:new(area, x, y, opts)
         end
     end)
 
-    self.timer:every(SHOOT_RATE, function()
-        self:shoot()
-    end)
-
     self.timer:every(TICK_RATE, function()
         self:tick()
     end)
 
     -- Stats
+
+    self.shoot_timer = 0
+    self.shoot_cooldown = SHOOT_RATE
 
     self.max_boost = 100
     self.boost = self.max_boost
@@ -105,18 +107,50 @@ end
 function Player:shoot()
     local d = 1.2*self.w
 
-    if self.ammo > 0 then
-        self.ammo = self.ammo - 1
-
     self.area:addGameObject('ShootEffect',
         self.x + d*math.cos(self.r),
         self.y + d*math.sin(self.r),
         {player = self, d = d})
 
-    self.area:addGameObject('Projectile',
-        self.x + 1.5*d*math.cos(self.r),
-        self.y + 1.5*d*math.sin(self.r),
-        {r = self.r})
+    if self.attack == 'Neutral' then
+        self.area:addGameObject('Projectile',
+            self.x + 1.5*d*math.cos(self.r), self.y + 1.5*d*math.sin(self.r), {r = self.r})
+    end
+
+    if self.attack == 'Double' then
+        local dr = math.pi/12
+        for _, r in ipairs({self.r + dr, self.r - dr}) do
+            self.area:addGameObject('Projectile',
+                self.x + 1.5*d*math.cos(r), self.y + 1.5*d*math.sin(r), {r = r, attack=self.attack})
+        end
+    end
+
+    if self.attack == 'Triple' then
+        local dr = math.pi/12
+        for _, r in ipairs({self.r + dr, self.r, self.r - dr}) do
+            self.area:addGameObject('Projectile',
+                self.x + 1.5*d*math.cos(r), self.y + 1.5*d*math.sin(r), {r = r, attack=self.attack})
+        end
+    end
+
+    if self.attack == 'Rapid' then
+        self.area:addGameObject('Projectile',
+            self.x + 1.5*d*math.cos(self.r), self.y + 1.5*d*math.sin(self.r),
+            {r = self.r, attack = self.attack})
+    end
+
+    if self.attack == 'Spread' then
+        local dr = utils.random(-math.pi/12, math.pi/12)
+        self.area:addGameObject('Projectile',
+            self.x + 1.5*d*math.cos(self.r + dr),
+            self.y + 1.5*d*math.sin(self.r + dr),
+            {r = self.r + dr, attack=self.attack})
+    end
+
+    self:addAmmo(-game_state.attacks[self.attack].ammo)
+    if self.ammo <= 0 then
+        self:setAttack("Neutral")
+        self.ammo = self.max_ammo
     end
 end
 
@@ -137,6 +171,12 @@ end
 
 function Player:update(dt)
     Player.super.update(self, dt)
+
+    self.shoot_timer = self.shoot_timer + dt
+    if self.shoot_timer > self.shoot_cooldown then
+        self.shoot_timer = 0
+        self:shoot()
+    end
 
     if input:down('left') then self.r = self.r - self.rv*dt end
     if input:down('right') then self.r = self.r + self.rv*dt end
@@ -194,6 +234,12 @@ function Player:update(dt)
             -- self:addHP(25)
         end
     end
+end
+
+function Player:setAttack(attack)
+    self.attack = attack
+    self.shoot_cooldown = game_state.attacks[attack].cooldown
+    self.ammo = self.max_ammo
 end
 
 function Player:addAmmo(amount)
