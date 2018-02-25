@@ -68,6 +68,14 @@ function Stage:new()
         self.player:setAttack("Spread")
     end)
 
+    input:bind('6', function()
+        self.player:setAttack("Back")
+    end)
+
+    input:bind('7', function()
+        self.player:setAttack("Side")
+    end)
+
 end
 
 function Stage:destroy()

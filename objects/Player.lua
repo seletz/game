@@ -147,6 +147,22 @@ function Player:shoot()
             {r = self.r + dr, attack=self.attack})
     end
 
+    if self.attack == 'Back' then
+        local dr = math.pi
+        for _, r in ipairs({self.r + dr, self.r}) do
+            self.area:addGameObject('Projectile',
+                self.x + 1.5*d*math.cos(r), self.y + 1.5*d*math.sin(r), {r = r, attack=self.attack})
+        end
+    end
+
+    if self.attack == 'Side' then
+        local dr = math.pi/2
+        for _, r in ipairs({self.r + dr, self.r, self.r - dr}) do
+            self.area:addGameObject('Projectile',
+                self.x + 1.5*d*math.cos(r), self.y + 1.5*d*math.sin(r), {r = r, attack=self.attack})
+        end
+    end
+
     self:addAmmo(-game_state.attacks[self.attack].ammo)
     if self.ammo <= 0 then
         self:setAttack("Neutral")
