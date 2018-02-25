@@ -40,7 +40,10 @@ function Boost:die()
         self.area:addGameObject('ExplodeParticle', self.x, self.y, {s = 3, color = colors.boost_color})
     end
 
-    self.area:addGameObject('InfoText', self.x, self.y, {text = '+BOOST', color = colors.boost_color})
+    self.area:addGameObject('InfoText',
+        self.x + utils.random(-self.w, self.w),
+        self.y + utils.random(-self.h, self.h),
+        {text = '+BOOST', color = colors.boost_color})
 end
 
 function Boost:update(dt)

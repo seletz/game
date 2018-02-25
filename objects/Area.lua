@@ -63,6 +63,16 @@ function Area:addGameObject(game_object_type, x, y, opts)
     return game_object
 end
 
+function Area:getAllGameObjectsThat(filter)
+    local out = {}
+    for _, game_object in pairs(self.game_objects) do
+        if filter(game_object) then
+            table.insert(out, game_object)
+        end
+    end
+    return out
+end
+
 function Area:addPhysicsWorld()
     self.world = Physics.newWorld(0, 0, true)
 end

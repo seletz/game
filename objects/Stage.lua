@@ -25,7 +25,7 @@ function Stage:new()
     -- Collectable will ignore Projectile
     -- Player will generate collision events with Collectable
     self.area.world:addCollisionClass('Player')
-    self.area.world:addCollisionClass('Projectile', {ignores = {'Projectile'}})
+    self.area.world:addCollisionClass('Projectile', {ignores = {'Player', 'Projectile'}})
     self.area.world:addCollisionClass('Collectable', {ignores = {'Projectile'}})
     -- self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
 

@@ -25,6 +25,16 @@ colors.hp_color = {241, 103, 69}
 colors.skill_point_color = {255, 198, 93 }
 colors.trail_color = colors.yellow
 
+colors.default_colors = {colors.default_color, colors.hp_color, colors.ammo_color, colors.boost_color, colors.skill_point_color}
+colors.negative_colors = {
+    {255-colors.default_color[1], 255-colors.default_color[2], 255-colors.default_color[3]},
+    {255-colors.hp_color[1], 255-colors.hp_color[2], 255-colors.hp_color[3]},
+    {255-colors.ammo_color[1], 255-colors.ammo_color[2], 255-colors.ammo_color[3]},
+    {255-colors.boost_color[1], 255-colors.boost_color[2], 255-colors.boost_color[3]},
+    {255-colors.skill_point_color[1], 255-colors.skill_point_color[2], 255-colors.skill_point_color[3]}
+}
+colors.all_colors = fn.append(colors.default_colors, colors.negative_colors)
+
 return colors
 
 

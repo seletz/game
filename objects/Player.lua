@@ -190,10 +190,23 @@ end
 
 function Player:addAmmo(amount)
     self.ammo = math.min(self.ammo + amount, self.max_ammo)
+    if self.ammo < 0 then
+        self.ammo = 0
+    end
 end
 
 function Player:addBoost(amount)
     self.boost = math.min(self.boost + amount, self.max_boost)
+    if self.boost < 0 then
+        self.boost = 0
+    end
+end
+
+function Player:addHP(amount)
+    self.hp = math.min(self.hp + amount, self.max_hp)
+    if self.hp < 0 then
+        self.hp = 0
+    end
 end
 
 function Player:draw()
