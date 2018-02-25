@@ -16,7 +16,6 @@ function Rock:new(area, x, y, opts)
     self.x = gw/2 + direction*(gw/2 + 48)
     self.y = utils.random(self.s, gh - self.s)
 
-
     self.color = opts.color or colors.hp_color
     self.points = utils.createIrregularPolyPoints(self.s/2, 8)
 

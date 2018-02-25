@@ -51,7 +51,6 @@ end
 
 function Attack:update(dt)
     Attack.super.update(self, dt)
-    self.collider:setLinearVelocity(self.v, 0)
 end
 
 function Attack:draw()

@@ -49,7 +49,6 @@ end
 
 function HP:update(dt)
     HP.super.update(self, dt)
-    self.collider:setLinearVelocity(self.v, 0)
 end
 
 function HP:draw()

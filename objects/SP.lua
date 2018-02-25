@@ -48,7 +48,6 @@ end
 
 function SP:update(dt)
     SP.super.update(self, dt)
-    self.collider:setLinearVelocity(self.v, 0)
 end
 
 function SP:draw()

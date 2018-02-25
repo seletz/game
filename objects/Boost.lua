@@ -48,7 +48,6 @@ end
 
 function Boost:update(dt)
     Boost.super.update(self, dt)
-    self.collider:setLinearVelocity(self.v, 0)
 end
 
 function Boost:draw()
