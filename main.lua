@@ -50,6 +50,8 @@ function love.load()
     utils.recursiveEnumerate('objects', object_files)
     utils.requireFiles(object_files)
 
+    fonts = utils.loadFonts()
+
     -- this only works if initialized here . :??
     input = Input()
 

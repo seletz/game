@@ -28,6 +28,27 @@ function utils.requireFiles(files)
     end
 end
 
+function utils.splitpath(p)
+    return string.match(p, "(.-)([^\\/]-%.?([^%.\\/]*))$")
+end
+
+function utils.loadFonts()
+    local files = {}
+    local fonts = {}
+
+    utils.recursiveEnumerate("resources/fonts", files)
+
+    for _, file in ipairs(files) do
+        local _, fname, ext = utils.splitpath(file)
+        if ext and string.match(ext, "ttf") then
+            print("font: " .. fname)
+            table[fname] = love.graphics.newFont(file)
+        end
+    end
+
+    return fonts
+end
+
 function utils.UUID()
     local fn = function(x)
         local r = math.random(16) - 1
