@@ -41,6 +41,7 @@ function Stage:new()
 
     self.timer:every(HP_RATE, function()
         self.area:addGameObject('HP', utils.random(0, gw), utils.random(0, gh))
+        self.area:addGameObject('SP', utils.random(0, gw), utils.random(0, gh))
     end)
 
     input:bind('f4', function()
