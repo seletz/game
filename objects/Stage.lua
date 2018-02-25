@@ -10,6 +10,7 @@ Stage = Object:extend()
 
 local AMMO_RATE         = 0.8
 local BOOST_RATE        = 3.0
+local HP_RATE           = 3.0
 
 function Stage:new()
     self.main_canvas = love.graphics.newCanvas(gw, gh)
@@ -26,8 +27,7 @@ function Stage:new()
     -- Player will generate collision events with Collectable
     self.area.world:addCollisionClass('Player')
     self.area.world:addCollisionClass('Projectile', {ignores = {'Player', 'Projectile'}})
-    self.area.world:addCollisionClass('Collectable', {ignores = {'Projectile'}})
-    -- self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
+    self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
 
@@ -37,6 +37,10 @@ function Stage:new()
 
     self.timer:every(BOOST_RATE, function()
         self.area:addGameObject('Boost', utils.random(0, gw), utils.random(0, gh))
+    end)
+
+    self.timer:every(HP_RATE, function()
+        self.area:addGameObject('HP', utils.random(0, gw), utils.random(0, gh))
     end)
 
     input:bind('f4', function()
