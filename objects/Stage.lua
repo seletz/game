@@ -8,19 +8,13 @@
 
 Stage = Object:extend()
 
-local AMMO_RATE         = 3.0
-local BOOST_RATE        = 3.0
-local HP_RATE           = 5.0
-local SP_RATE           = 5.0
-local ROCK_RATE         = 1.0
-local PWRUP_RATE        = 4.0
-
 function Stage:new()
     self.main_canvas = love.graphics.newCanvas(gw, gh)
 
     self.timer = Timer()
 
     self.area = Area(self)
+    self.director = Director(self)
     self.area:addPhysicsWorld()
 
 
@@ -36,30 +30,8 @@ function Stage:new()
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
 
-    self.timer:every(AMMO_RATE, function()
-        self.area:addGameObject('Ammo', utils.random(0, gw), utils.random(0, gh))
-    end)
-
-    self.timer:every(BOOST_RATE, function()
-        self.area:addGameObject('Boost', utils.random(0, gw), utils.random(0, gh))
-    end)
-
-    self.timer:every(ROCK_RATE, function()
+    input:bind('r', function()
         self.area:addGameObject('Rock', utils.random(0, gw), utils.random(0, gh))
-        self.area:addGameObject('Shooter', utils.random(0, gw), utils.random(0, gh))
-    end)
-
-    self.timer:every(HP_RATE, function()
-        self:addHPResource()
-    end)
-
-    self.timer:every(SP_RATE, function()
-        self:addSPResource()
-        self:addRandomAttackResource()
-    end)
-
-    self.timer:every(PWRUP_RATE, function()
-        self:addRandomAttackResource()
     end)
 
     input:bind('1', function()
@@ -98,16 +70,16 @@ function Stage:destroy()
 end
 
 function Stage:update(dt)
-    self.timer:update(dt)
-
     camera:lockPosition(dt, gw/2, gh/2)
 
+    self.timer:update(dt)
+    self.director:update(dt)
     self.area:update(dt)
 end
 
 function Stage:addSPResource()
     print("+SP")
-    self.area:addGameObject('SP', utils.random(0, gw), utils.random(0, gh))
+    self.area:addGameObject('SkillPoint', utils.random(0, gw), utils.random(0, gh))
 end
 
 function Stage:addHPResource()

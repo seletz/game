@@ -6,10 +6,10 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-SP = GameObject:extend()
+SkillPoint = GameObject:extend()
 
-function SP:new(area, x, y, opts)
-    SP.super.new(self, area, x, y, opts)
+function SkillPoint:new(area, x, y, opts)
+    SkillPoint.super.new(self, area, x, y, opts)
 
     local direction = utils.table.random({-1, 1})
     self.x = gw/2 + direction*(gw/2 + 48)
@@ -27,11 +27,11 @@ function SP:new(area, x, y, opts)
     self.collider:applyAngularImpulse(utils.random(-24, 24))
 end
 
-function SP:destroy()
-    SP.super.destroy(self)
+function SkillPoint:destroy()
+    SkillPoint.super.destroy(self)
 end
 
-function SP:die()
+function SkillPoint:die()
     self.dead = true
     self.area:addGameObject('BoostEffect', self.x, self.y,
         {color = colors.skill_point_color, w = self.w, h = self.h, r = self.r})
@@ -43,14 +43,14 @@ function SP:die()
     self.area:addGameObject('InfoText',
         self.x + utils.random(-self.w, self.w),
         self.y + utils.random(-self.h, self.h),
-        {text = '+1 SP', color = colors.skill_point_color})
+        {text = '+1 SkillPoint', color = colors.skill_point_color})
 end
 
-function SP:update(dt)
-    SP.super.update(self, dt)
+function SkillPoint:update(dt)
+    SkillPoint.super.update(self, dt)
 end
 
-function SP:draw()
+function SkillPoint:draw()
     love.graphics.setColor(self.color)
     utils.pushRotate(self.x, self.y, self.collider:getAngle())
     draft:rhombus(self.x, self.y, 1.5*self.w, 1.5*self.h, 'line')

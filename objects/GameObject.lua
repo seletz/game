@@ -17,7 +17,8 @@ function GameObject:new(area, x, y, opts)
     end
 
     self.area = area
-    self.x, self.y = x, y
+    self.x = x or utils.random(0, gw)
+    self.y = y or utils.random(0, gh)
     self.id = utils.UUID()
     self.dead = false
     self.timer = Timer()
