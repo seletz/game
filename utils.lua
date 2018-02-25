@@ -53,6 +53,22 @@ function utils.loadFonts()
     return fonts
 end
 
+function utils.createIrregularPolyPoints(s, n)
+    local size = s or 14
+    local n_points = n or 8
+    local dr = 2*math.pi / n_points
+    local points = {}
+
+    for i = 0,n_points-1 do
+        local r = i*dr
+        local d = size + utils.random(-size/4, size/4)
+
+        table.insert(points, d*math.cos(r))
+        table.insert(points, d*math.sin(r))
+    end
+    return points
+end
+
 function utils.UUID()
     local fn = function(x)
         local r = math.random(16) - 1

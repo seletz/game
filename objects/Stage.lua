@@ -26,6 +26,7 @@ function Stage:new()
     -- Collectable will ignore Projectile
     -- Player will generate collision events with Collectable
     self.area.world:addCollisionClass('Player')
+    self.area.world:addCollisionClass('Enemy')
     self.area.world:addCollisionClass('Projectile', {ignores = {'Player', 'Projectile'}})
     self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
 
@@ -37,11 +38,12 @@ function Stage:new()
 
     self.timer:every(BOOST_RATE, function()
         self.area:addGameObject('Boost', utils.random(0, gw), utils.random(0, gh))
+        self.area:addGameObject('Rock', utils.random(0, gw), utils.random(0, gh))
     end)
 
     self.timer:every(HP_RATE, function()
-        self:addHPResource()
-        self:addSPResource()
+        -- self:addHPResource()
+        -- self:addSPResource()
         self:addRandomAttackResource()
     end)
 
