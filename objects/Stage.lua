@@ -32,6 +32,7 @@ function Stage:new()
     self.area.world:addCollisionClass('Enemy')
     self.area.world:addCollisionClass('Projectile', {ignores = {'Player', 'Projectile'}})
     self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
+    self.area.world:addCollisionClass('EnemyProjectile', {ignores = {'EnemyProjectile', 'Projectile', 'Enemy'}})
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
 
@@ -45,6 +46,7 @@ function Stage:new()
 
     self.timer:every(ROCK_RATE, function()
         self.area:addGameObject('Rock', utils.random(0, gw), utils.random(0, gh))
+        self.area:addGameObject('Shooter', utils.random(0, gw), utils.random(0, gh))
     end)
 
     self.timer:every(HP_RATE, function()
