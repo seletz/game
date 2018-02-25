@@ -37,6 +37,9 @@ function Director:new(stage)
     self.resource_timer = 0
     self.resource_duration = 16
 
+    self.powerup_timer = 0
+    self.powerup_duration = 30
+
     self:setEnemySpawnsForThisRound()
 end
 
@@ -117,5 +120,11 @@ function Director:update(dt)
         print("D:   +" .. resource)
         self.resource_timer = 0
         self.stage.area:addGameObject(resource, utils.random(0, gw), utils.random(0, gh))
+    end
+
+    self.powerup_timer = self.powerup_timer + dt
+    if self.powerup_timer > self.powerup_duration then
+        self.powerup_timer = 0
+        self.stage:addRandomAttackResource()
     end
 end
