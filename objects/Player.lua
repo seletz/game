@@ -249,10 +249,15 @@ function Player:update(dt)
             object:die()
             -- self:addHP(25)
         end
+        if object:is(Attack) then
+            self:setAttack(object.attack)
+            object:die()
+        end
     end
 end
 
 function Player:setAttack(attack)
+    print("P: attack " .. attack)
     self.attack = attack
     self.shoot_cooldown = game_state.attacks[attack].cooldown
     self.ammo = self.max_ammo

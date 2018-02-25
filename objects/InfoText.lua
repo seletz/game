@@ -31,7 +31,7 @@ function InfoText:new(area, x, y, opts)
     -- death after
     self.timer:after(1.10, function() self.dead = true end)
 
-    -- randomize colors and letters effect
+    -- randomize color
     self.timer:after(0.70, function()
         self.timer:every(0.05, function() self.visible = not self.visible end, 6)
         self.timer:after(0.35, function() self.visible = true end)

@@ -40,8 +40,9 @@ function Stage:new()
     end)
 
     self.timer:every(HP_RATE, function()
-        self.area:addGameObject('HP', utils.random(0, gw), utils.random(0, gh))
-        self.area:addGameObject('SP', utils.random(0, gw), utils.random(0, gh))
+        self:addHPResource()
+        self:addSPResource()
+        self:addRandomAttackResource()
     end)
 
     input:bind('f4', function()
@@ -89,6 +90,30 @@ function Stage:update(dt)
     camera:lockPosition(dt, gw/2, gh/2)
 
     self.area:update(dt)
+end
+
+function Stage:addSPResource()
+    print("+SP")
+    self.area:addGameObject('SP', utils.random(0, gw), utils.random(0, gh))
+end
+
+function Stage:addHPResource()
+    print("+HP")
+    self.area:addGameObject('HP', utils.random(0, gw), utils.random(0, gh))
+end
+
+function Stage:addRandomAttackResource()
+    local attacks = {}
+    for k in pairs(game_state.attacks) do
+        table.insert(attacks, k)
+    end
+
+    local attack = attacks[math.random(#attacks)]
+
+    print("+"..attack)
+    self.area:addGameObject("Attack", utils.random(0, gw), utils.random(0, gh), {
+        attack=attack
+    })
 end
 
 function Stage:draw()

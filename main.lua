@@ -45,7 +45,7 @@ game_state = {
         ['Spread']      = {cooldown = 0.16, ammo = 1, abbreviation = 'RS', color = colors.default_color},
         ['Back']        = {cooldown = 0.32, ammo = 2, abbreviation = 'Ba', color = colors.skill_point_color },
         ['Side']        = {cooldown = 0.32, ammo = 2, abbreviation = 'Si', color = colors.boost_color}
-    }
+    },
 }
 
 ------------------------------------------------------------------------------
