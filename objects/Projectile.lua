@@ -53,6 +53,13 @@ function Projectile:update(dt)
         object:hit(self.damage)
         self:die()
     end
+    if self.collider:enter('EnemyProjectile') then
+        local collision_data = self.collider:getEnterCollisionData('EnemyProjectile')
+        local object = collision_data.collider:getObject()
+
+        object:die()
+        self:die()
+    end
 end
 
 function Projectile:draw()

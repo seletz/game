@@ -42,8 +42,10 @@ function Shooter:new(area, x, y, opts)
             self.area:addGameObject('EnemyProjectile',
                 self.x + 1.4*self.w*math.cos(self.collider:getAngle()),
                 self.y + 1.4*self.w*math.sin(self.collider:getAngle()),
-                {r = math.atan2(current_room.player.y - self.y, current_room.player.x - self.x),
-                    v = utils.random(80, 100), s = 3.5})
+                {
+                    r = math.atan2(current_room.player.y - self.y, current_room.player.x - self.x),
+                    v = utils.random(80, 100), s = 3.5
+                })
         end)
     end)
 
