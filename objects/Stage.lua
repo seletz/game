@@ -8,6 +8,9 @@
 
 Stage = Object:extend()
 
+local AMMO_RATE         = 0.8
+local BOOST_RATE        = 3.0
+
 function Stage:new()
     self.main_canvas = love.graphics.newCanvas(gw, gh)
 
@@ -28,8 +31,12 @@ function Stage:new()
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
 
-    input:bind('p', function()
+    self.timer:every(AMMO_RATE, function()
         self.area:addGameObject('Ammo', utils.random(0, gw), utils.random(0, gh))
+    end)
+
+    self.timer:every(BOOST_RATE, function()
+        self.area:addGameObject('Boost', utils.random(0, gw), utils.random(0, gh))
     end)
 
     input:bind('f4', function()

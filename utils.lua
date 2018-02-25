@@ -57,6 +57,11 @@ function utils.pushRotateScale(x, y, r, sx, sy)
     love.graphics.translate(-x, -y)
 end
 
+utils.table = {}
+function utils.table.random(t)
+    return t[love.math.random(1, #t)]
+end
+
 function utils.count_all(f)
     local seen = {}
     local count_table

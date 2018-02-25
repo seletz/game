@@ -8,6 +8,9 @@
 
 Player = GameObject:extend()
 
+local SHOOT_RATE = 0.25
+local TICK_RATE = 5
+
 function Player:new(area, x, y, opts)
     Player.super.new(self, area, x, y, opts)
 
@@ -72,11 +75,11 @@ function Player:new(area, x, y, opts)
         end
     end)
 
-    self.timer:every(0.24, function()
+    self.timer:every(SHOOT_RATE, function()
         self:shoot()
     end)
 
-    self.timer:every(5, function()
+    self.timer:every(TICK_RATE, function()
         self:tick()
     end)
 
@@ -178,11 +181,19 @@ function Player:update(dt)
             object:die()
             self:addAmmo(5)
         end
+        if object:is(Boost) then
+            object:die()
+            self:addBoost(25)
+        end
     end
 end
 
 function Player:addAmmo(amount)
     self.ammo = math.min(self.ammo + amount, self.max_ammo)
+end
+
+function Player:addBoost(amount)
+    self.boost = math.min(self.boost + amount, self.max_boost)
 end
 
 function Player:draw()
