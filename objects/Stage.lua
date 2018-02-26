@@ -17,6 +17,11 @@ function Stage:new()
     self.director = Director(self)
     self.area:addPhysicsWorld()
 
+    self.font = fonts.C64_Pro_STYLE
+
+    self.score = 0
+    self.skill_points = 0
+
 
     -- Projectile will ignore Projectile
     -- XXX: Collectable will ignore Collectable
@@ -64,9 +69,23 @@ function Stage:new()
 
 end
 
+function Stage:addScore(pt)
+    self.score = self.score + pt
+end
+
+function Stage:addSkillPoint(pt)
+    self.skill_points = self.skill_points + pt
+end
+
 function Stage:destroy()
     self.area:destroy()
     self.area = nil
+end
+
+function Stage:finish()
+    timer:after(1, function()
+        gotoRoom('Stage')
+    end)
 end
 
 function Stage:update(dt)
@@ -101,12 +120,55 @@ function Stage:addRandomAttackResource()
     })
 end
 
+local function bar(x, y, w, h, color, current, max, font)
+    local r, g, b = unpack(color or colors.default_color)
+    local current, max = math.floor(current or 0), max or 100
+    local w = w or 48
+    local h = h or 4
+    love.graphics.setColor(r, g, b)
+    love.graphics.rectangle('fill', x, y, w*(current / max), h)
+    love.graphics.setColor(r - 32, g - 32, b - 32)
+    love.graphics.rectangle('line', x, y, w, h)
+
+    love.graphics.setColor(r, g, b)
+    love.graphics.print(current .. '/' .. max, x + 24, y - 10, 0, 0.5, 0.5,
+        math.floor(font:getWidth(current .. '/' .. max)/2),
+        math.floor(font:getHeight()/2))
+end
+
 function Stage:draw()
     love.graphics.setCanvas(self.main_canvas)
     love.graphics.clear()
     camera:attach(0, 0, gw, gh)
     self.area:draw()
     camera:detach()
+
+    love.graphics.setFont(self.font)
+
+    -- Score
+    love.graphics.setColor(colors.default_color)
+    love.graphics.print(self.score, gw - 20, 10, 0, 1, 1,
+        math.floor(self.font:getWidth(self.score)/2), self.font:getHeight()/2)
+
+    -- Skill Points
+    love.graphics.setColor(colors.skill_point_color)
+    love.graphics.print(self.skill_points, 20, 10, 0, 1, 1,
+        math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
+
+    -- Hp
+    bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color, self.player.hp, self.player.max_hp, fonts.ARCADECLASSIC)
+
+    -- Ammo
+    bar(gw/2 - 52, 16, 48, 4, colors.ammo_color, self.player.ammo, self.player.max_ammo, fonts.ARCADECLASSIC)
+
+    -- boost
+    bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, fonts.ARCADECLASSIC)
+
+    -- cycle
+    -- bar(gw/2 + 4, gh - 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
+
+
+    love.graphics.setColor(255, 255, 255)
     love.graphics.setCanvas()
 
     love.graphics.setColor(255, 255, 255, 255)

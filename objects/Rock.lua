@@ -35,6 +35,7 @@ function Rock:new(area, x, y, opts)
     -- stats
 
     self.hp = opts.hp or 100
+    self.value = 100
 end
 
 function Rock:destroy()
@@ -55,6 +56,7 @@ function Rock:hit(damage)
 
     if self.hp <= 0 then
         self:die()
+        self.area.room:addScore(self.value)
     else
         self.hit_flash = true
         self.timer:after(0.2, function() self.hit_flash = false end)

@@ -183,6 +183,7 @@ function Player:die()
     camera:shake(6, 60, 0.4)
     slow(0.15, 1)
     self:brzzt()
+    game_state.current_room:finish()
 end
 
 function Player:brzzt(a, b)
@@ -270,10 +271,12 @@ function Player:update(dt)
         if object:is(Ammo) then
             object:die()
             self:addAmmo(5)
+            game_state.current_room:addScore(50)
         end
         if object:is(Boost) then
             object:die()
             self:addBoost(25)
+            game_state.current_room:addScore(150)
         end
         if object:is(HP) then
             object:die()
@@ -281,10 +284,13 @@ function Player:update(dt)
         end
         if object:is(SkillPoint) then
             object:die()
+            game_state.current_room:addScore(250)
+            game_state.current_room:addSkillPoint(1)
         end
         if object:is(Attack) then
             self:setAttack(object.attack)
             object:die()
+            game_state.current_room:addScore(500)
         end
     end
 
@@ -340,10 +346,6 @@ function Player:draw()
     end
 
     love.graphics.pop()
-
-    love.graphics.print(
-        string.format("HP %2d AM %2d BST %2d V %2d ", self.hp, self.ammo, self.boost, self.v),
-        10, 10)
 end
 
 

@@ -52,6 +52,7 @@ function Shooter:new(area, x, y, opts)
     -- stats
 
     self.hp = opts.hp or 100
+    self.value = 150
 end
 
 function Shooter:destroy()
@@ -72,6 +73,7 @@ function Shooter:hit(damage)
 
     if self.hp <= 0 then
         self:die()
+        self.area.room:addScore(self.value)
     else
         self.hit_flash = true
         self.timer:after(0.2, function() self.hit_flash = false end)

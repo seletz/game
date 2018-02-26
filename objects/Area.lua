@@ -21,6 +21,7 @@ end
 
 function Area:destroy()
     for i = #self.game_objects, 1, -1 do
+        local game_object = self.game_objects[i]
         game_object:destroy()
     end
 
