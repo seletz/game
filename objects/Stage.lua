@@ -115,24 +115,6 @@ function Stage:addRandomAttackResource()
     })
 end
 
-local function bar(x, y, w, h, color, current, max, font, font_scale)
-    local r, g, b = unpack(color or colors.default_color)
-    local current, max = math.floor(current or 0), max or 100
-    local w = w or 48
-    local h = h or 4
-    local sf = font_scale or 0.75
-    love.graphics.setColor(r, g, b)
-    love.graphics.rectangle('fill', x, y, w*(current / max), h)
-    love.graphics.setColor(r - 32, g - 32, b - 32)
-    love.graphics.rectangle('line', x, y, w, h)
-
-    love.graphics.setFont(font)
-    love.graphics.setColor(r, g, b)
-    love.graphics.print(current .. '/' .. max, x + 24, y - 10, 0, sf, sf,
-        math.floor(font:getWidth(current .. '/' .. max)/2),
-        math.floor(font:getHeight()/2))
-end
-
 function Stage:draw()
     love.graphics.setCanvas(self.main_canvas)
     love.graphics.clear()
@@ -153,16 +135,16 @@ function Stage:draw()
         math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
 
     -- Hp
-    bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color, self.player.hp, self.player.max_hp, self.font)
+    gameui.bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color, self.player.hp, self.player.max_hp, self.font)
 
     -- Ammo
-    bar(gw/2 - 52, 16, 48, 4, colors.ammo_color, self.player.ammo, self.player.max_ammo, self.font)
+    gameui.bar(gw/2 - 52, 16, 48, 4, colors.ammo_color, self.player.ammo, self.player.max_ammo, self.font)
 
     -- boost
-    bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
+    gameui.bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
 
     -- cycle
-    bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.director.cycle_time*10, self.director.cycle_duration*10, self.font)
+    gameui.bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.director.cycle_time*10, self.director.cycle_duration*10, self.font)
 
 
     love.graphics.setColor(255, 255, 255)

@@ -15,9 +15,11 @@ require 'libraries/utf8/utf8'
 
 ------------------------------------------------------------------------------
 -- GAME LIBRARIES
-require 'objects/GameObject'
-utils = require 'utils'
-colors = require 'colors'
+CooldownTimer   = require 'libraries/game/CooldownTimer'
+GameObject      = require 'libraries/game/GameObject'
+gameui          = require 'libraries/game/UI'
+utils           = require 'libraries/game/utils'
+colors          = require 'libraries/game/colors'
 
 ------------------------------------------------------------------------------
 -- GLOBALS

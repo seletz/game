@@ -4,7 +4,7 @@
 --- DateTime: 18.02.18 12:23
 ---
 
-function CooldownTimer(duration)
+local function CooldownTimer(duration)
     local t = 0
     local d = duration
 
@@ -17,3 +17,5 @@ function CooldownTimer(duration)
         return t
     end
 end
+
+return CooldownTimer

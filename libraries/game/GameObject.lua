@@ -6,7 +6,7 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-GameObject = Object:extend()
+local GameObject = Object:extend()
 
 function GameObject:new(area, x, y, opts)
     local opts = opts or {}
@@ -48,3 +48,4 @@ function GameObject:__tostring()
     return "GameObject( " .. self.id .. " @ " .. self.x .. ", " .. self.y .. " )"
 end
 
+return GameObject
