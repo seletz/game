@@ -115,11 +115,12 @@ function Stage:addRandomAttackResource()
     })
 end
 
-local function bar(x, y, w, h, color, current, max, font)
+local function bar(x, y, w, h, color, current, max, font, font_scale)
     local r, g, b = unpack(color or colors.default_color)
     local current, max = math.floor(current or 0), max or 100
     local w = w or 48
     local h = h or 4
+    local sf = font_scale or 0.75
     love.graphics.setColor(r, g, b)
     love.graphics.rectangle('fill', x, y, w*(current / max), h)
     love.graphics.setColor(r - 32, g - 32, b - 32)
@@ -127,7 +128,7 @@ local function bar(x, y, w, h, color, current, max, font)
 
     love.graphics.setFont(font)
     love.graphics.setColor(r, g, b)
-    love.graphics.print(current .. '/' .. max, x + 24, y - 10, 0, 1, 1,
+    love.graphics.print(current .. '/' .. max, x + 24, y - 10, 0, sf, sf,
         math.floor(font:getWidth(current .. '/' .. max)/2),
         math.floor(font:getHeight()/2))
 end
@@ -152,16 +153,16 @@ function Stage:draw()
         math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
 
     -- Hp
-    bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color, self.player.hp, self.player.max_hp, fonts.ARCADECLASSIC)
+    bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color, self.player.hp, self.player.max_hp, self.font)
 
     -- Ammo
-    bar(gw/2 - 52, 16, 48, 4, colors.ammo_color, self.player.ammo, self.player.max_ammo, fonts.ARCADECLASSIC)
+    bar(gw/2 - 52, 16, 48, 4, colors.ammo_color, self.player.ammo, self.player.max_ammo, self.font)
 
     -- boost
-    bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, fonts.ARCADECLASSIC)
+    bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
 
     -- cycle
-    -- bar(gw/2 + 4, gh - 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
+    bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.player.cycle_timer*10, self.player.cycle_cooldown*10, self.font)
 
 
     love.graphics.setColor(255, 255, 255)

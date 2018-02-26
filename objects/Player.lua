@@ -62,14 +62,13 @@ function Player:new(area, x, y, opts)
     self.trail_color = colors.trail_color
 
 
-    self.timer:every(TICK_RATE, function()
-        self:tick()
-    end)
-
     -- Effects
     self:trailEffect()
 
     -- Stats
+
+    self.cycle_timer = 0
+    self.cycle_cooldown = 5
 
     self.invincible = false
 
@@ -232,6 +231,12 @@ function Player:update(dt)
     if self.shoot_timer > self.shoot_cooldown then
         self.shoot_timer = 0
         self:shoot()
+    end
+
+    self.cycle_timer = self.cycle_timer + dt
+    if self.cycle_timer > self.cycle_cooldown then
+        self.cycle_timer = 0
+        self:tick()
     end
 
     if input:down('left') then self.r = self.r - self.rv*dt end
