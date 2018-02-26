@@ -17,6 +17,7 @@ require 'libraries/utf8/utf8'
 -- GAME LIBRARIES
 CooldownTimer   = require 'libraries/game/CooldownTimer'
 GameObject      = require 'libraries/game/GameObject'
+Stats           = require 'libraries/game/Stats'
 gameui          = require 'libraries/game/UI'
 utils           = require 'libraries/game/utils'
 colors          = require 'libraries/game/colors'

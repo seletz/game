@@ -75,26 +75,18 @@ function Player:setupStats()
     -- Movement
     self.r = -math.pi/2
     self.rv = 1.66*math.pi
-    self.v = 0
-    self.base_max_v = 100
-    self.max_v = self.base_max_v
-    self.a = 100
+
+    self.velocity_stat  = Stats("velocity", 100)
+    self.accel_stat     = Stats("accel", 100)
 
     -- Boosting
-    self.max_boost = 100
-    self.boost = self.max_boost
+    self.boost_stat     = Stats("boost", 100)
 
     -- Hit Points
-    self.base_max_hp = 100
-    self.max_hp = self.base_max_hp
-    self.hp = self.max_hp
+    self.hp_stat        = Stats("hp", 100)
 
     -- Ammunition
-    self.base_max_ammo = 100
-    self.max_ammo = self.base_max_ammo
-    self.ammo = self.max_ammo
-
-    -- Multipliers
+    self.ammo_stat      = Stats("ammo", 100)
 end
 
 function Player:destroy()
@@ -180,10 +172,6 @@ function Player:shoot()
     end
 
     self:addAmmo(-game_state.attacks[self.attack].ammo)
-    if self.ammo <= 0 then
-        self:setAttack("Neutral")
-        self.ammo = self.max_ammo
-    end
 end
 
 function Player:tick()
@@ -235,6 +223,11 @@ end
 
 function Player:update(dt)
     Player.super.update(self, dt)
+    local boost = self.boost_stat:add(10*dt)
+    local v = self.velocity_stat:reset()
+    local a = self.accel_stat:reset()
+
+    -- increase boost over time
 
     self.shoot_timer(dt, function()
         self:shoot()
@@ -247,35 +240,31 @@ function Player:update(dt)
     if input:down('left') then self.r = self.r - self.rv*dt end
     if input:down('right') then self.r = self.r + self.rv*dt end
 
-    self.boost = math.min(self.boost + 10*dt, self.max_boost)
-    self.max_v = self.base_max_v
     self.boosting = false
-
-    if input:down('up') and self.boost > 1 and self.can_boost then
+    if input:down('up') and boost > 1 and self.can_boost then
         self.boosting = true
-        self.max_v = 1.5*self.base_max_v
-        self.boost = self.boost - 50*dt
-        if self.boost <= 1 then
-            self.boosting = false
-            self.can_boost = false
-        end
+        v = self.velocity_stat:multiply(1.5)
     end
-    if input:down('down') and self.boost > 1 and self.can_boost then
+
+    if input:down('down') and boost > 1 and self.can_boost then
         self.boosting = true
-        self.max_v = 0.5*self.base_max_v
-        self.boost = self.boost - 50*dt
-        if self.boost <= 1 then
-            self.boosting = false
-            self.can_boost = false
-        end
+        v = self.velocity_stat:multiply(0.5)
     end
 
     self.trail_color = colors.skill_point_color
-    if self.boosting then self.trail_color = colors.boost_color end
+    if self.boosting then
+        self.trail_color = colors.boost_color
+
+        -- decrease boost while boosting
+        boost = self.boost_stat:sub(50*dt, function()
+            self.boosting = false
+            self.can_boost = false
+        end)
+    end
 
     --
-    self.v = math.min(self.v + self.a*dt, self.max_v)
-    self.collider:setLinearVelocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
+    v = self.velocity_stat:add(self.accel_stat.value*dt)
+    self.collider:setLinearVelocity(v*math.cos(self.r), v*math.sin(self.r))
 
     if self.collider:enter('Collectable') then
         local collision_data = self.collider:getEnterCollisionData('Collectable')
@@ -313,31 +302,26 @@ end
 
 function Player:setAttack(attack)
     print("P: attack " .. attack)
+    local cooldown = game_state.attacks[attack].cooldown
+    self.shoot_timer = CooldownTimer(cooldown)
     self.attack = attack
-    self.shoot_cooldown = game_state.attacks[attack].cooldown
-    self.ammo = self.max_ammo
 end
 
 function Player:addAmmo(amount)
-    self.ammo = math.min(self.ammo + amount, self.max_ammo)
-    if self.ammo < 0 then
-        self.ammo = 0
-    end
+    self.ammo_stat:add(amount, function()
+        self.ammo_stat:reset()
+        self:setAttack('Neutral')
+    end)
 end
 
 function Player:addBoost(amount)
-    self.boost = math.min(self.boost + amount, self.max_boost)
-    if self.boost < 0 then
-        self.boost = 0
-    end
+    self.boost_stat:add(amount)
 end
 
 function Player:addHP(amount)
-    self.hp = math.min(self.hp + amount, self.max_hp)
-    if self.hp < 0 then
-        self.hp = 0
+    self.hp_stat:add(amount, function()
         self:die()
-    end
+    end)
 end
 
 function Player:draw()

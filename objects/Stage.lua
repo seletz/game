@@ -135,13 +135,22 @@ function Stage:draw()
         math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
 
     -- Hp
-    gameui.bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color, self.player.hp, self.player.max_hp, self.font)
+    gameui.bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color,
+        self.player.hp_stat.value,
+        self.player.hp_stat.max,
+        self.font)
 
     -- Ammo
-    gameui.bar(gw/2 - 52, 16, 48, 4, colors.ammo_color, self.player.ammo, self.player.max_ammo, self.font)
+    gameui.bar(gw/2 - 52, 16, 48, 4, colors.ammo_color,
+        self.player.ammo_stat.value,
+        self.player.ammo_stat.max,
+        self.font)
 
     -- boost
-    gameui.bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
+    gameui.bar(gw/2 + 4, 16, 48, 4, colors.boost_color,
+        self.player.boost_stat.value,
+        self.player.boost_stat.max,
+        self.font)
 
     -- cycle
     gameui.bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.director.cycle_time*10, self.director.cycle_duration*10, self.font)
