@@ -162,7 +162,7 @@ function Stage:draw()
     bar(gw/2 + 4, 16, 48, 4, colors.boost_color, self.player.boost, self.player.max_boost, self.font)
 
     -- cycle
-    bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.player.cycle_timer*10, self.player.cycle_cooldown*10, self.font)
+    bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.director.cycle_time*10, self.director.cycle_duration*10, self.font)
 
 
     love.graphics.setColor(255, 255, 255)

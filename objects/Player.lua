@@ -9,7 +9,6 @@
 Player = GameObject:extend()
 
 local SHOOT_RATE = 0.25
-local TICK_RATE = 5
 local BOOST_RATE = 2
 
 local SHIP_SIZE = 12
@@ -56,14 +55,8 @@ function Player:new(area, x, y, opts)
     self:setAttack('Neutral')
 
     -- Timers
-    self.cycle_timer = 0
-    self.cycle_cooldown = TICK_RATE
-
-    self.shoot_timer = 0
-    self.shoot_cooldown = SHOOT_RATE
-
-    self.boost_timer = 0
-    self.boost_cooldown = BOOST_RATE
+    self.shoot_timer = CooldownTimer(SHOOT_RATE)
+    self.boost_timer = CooldownTimer(BOOST_RATE)
 
     -- Flags
     self.can_boost = true
@@ -243,24 +236,18 @@ end
 function Player:update(dt)
     Player.super.update(self, dt)
 
-    self.shoot_timer = self.shoot_timer + dt
-    if self.shoot_timer > self.shoot_cooldown then
-        self.shoot_timer = 0
+    self.shoot_timer(dt, function()
         self:shoot()
-    end
+    end)
 
-    self.cycle_timer = self.cycle_timer + dt
-    if self.cycle_timer > self.cycle_cooldown then
-        self.cycle_timer = 0
-        self:tick()
-    end
+    self.boost_timer(dt, function()
+        self.can_boost = true
+    end)
 
     if input:down('left') then self.r = self.r - self.rv*dt end
     if input:down('right') then self.r = self.r + self.rv*dt end
 
     self.boost = math.min(self.boost + 10*dt, self.max_boost)
-    self.boost_timer = self.boost_timer + dt
-    if self.boost_timer > self.boost_cooldown then self.can_boost = true end
     self.max_v = self.base_max_v
     self.boosting = false
 
@@ -271,7 +258,6 @@ function Player:update(dt)
         if self.boost <= 1 then
             self.boosting = false
             self.can_boost = false
-            self.boost_timer = 0
         end
     end
     if input:down('down') and self.boost > 1 and self.can_boost then
@@ -281,9 +267,9 @@ function Player:update(dt)
         if self.boost <= 1 then
             self.boosting = false
             self.can_boost = false
-            self.boost_timer = 0
         end
     end
+
     self.trail_color = colors.skill_point_color
     if self.boosting then self.trail_color = colors.boost_color end
 

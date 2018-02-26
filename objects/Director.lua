@@ -32,13 +32,14 @@ function Director:new(stage)
 
     self.difficulty = 1
     self.round_duration = 22
-    self.round_timer = 0
+    self.cycle_duration = 5
 
-    self.resource_timer = 0
-    self.resource_duration = 16
-
-    self.powerup_timer = 0
-    self.powerup_duration = 30
+    self.round_cooldown     = CooldownTimer(self.round_duration)
+    self.resource_cooldown  = CooldownTimer(16)
+    self.powerup_cooldown   = CooldownTimer(30)
+    self.ammo_cooldown      = CooldownTimer(3)
+    self.cycle_cooldown     = CooldownTimer(self.cycle_duration)
+    self.cycle_time         = 0
 
     self:setEnemySpawnsForThisRound()
 end
@@ -107,24 +108,27 @@ end
 
 function Director:update(dt)
     self.timer:update(dt)
-    self.round_timer = self.round_timer + dt
-    if self.round_timer > self.round_duration then
-        self.round_timer = 0
+
+    self.round_cooldown(dt, function()
         self.difficulty = self.difficulty + 1
         self:setEnemySpawnsForThisRound()
-    end
+    end)
 
-    self.resource_timer = self.resource_timer + dt
-    if self.resource_timer > self.resource_duration then
+    self.cycle_time = self.cycle_cooldown(dt, function()
+        self.stage.player:tick()
+    end)
+
+    self.resource_cooldown(dt, function()
         local resource = self.resource_spawn_chances:next()
         print("D:   +" .. resource)
-        self.resource_timer = 0
         self.stage.area:addGameObject(resource, utils.random(0, gw), utils.random(0, gh))
-    end
+    end)
 
-    self.powerup_timer = self.powerup_timer + dt
-    if self.powerup_timer > self.powerup_duration then
-        self.powerup_timer = 0
+    self.powerup_cooldown(dt, function()
         self.stage:addRandomAttackResource()
-    end
+    end)
+
+    self.ammo_cooldown(dt, function()
+        self.stage.area:addGameObject('Ammo', utils.random(0, gw), utils.random(0, gh))
+    end)
 end
