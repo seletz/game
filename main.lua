@@ -66,11 +66,6 @@ function love.load()
     -- this only works if initialized here . :??
     input = Input()
 
-    input:bind('x', function()
-        print("BOOOOOM!")
-        camera:shake(4, 60, 1)
-    end)
-
     input:bind("left", "left")
     input:bind("right", "right")
     input:bind("up", "up")
@@ -85,17 +80,6 @@ function love.load()
         local counts = utils.type_count()
         for k, v in pairs(counts) do print(k, v) end
         print("------------------------------------------------------------")
-    end)
-
-    input:bind("f2", function()
-        gotoRoom("Stage")
-    end)
-
-    input:bind("f3", function()
-        if current_room and current_room.destroy then
-            print("kill current room ...")
-            current_room:destroy()
-        end
     end)
 
     love.graphics.setDefaultFilter("nearest")

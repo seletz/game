@@ -22,7 +22,6 @@ function Stage:new()
     self.score = 0
     self.skill_points = 0
 
-
     -- Projectile will ignore Projectile
     -- XXX: Collectable will ignore Collectable
     -- Collectable will ignore Projectile
@@ -34,10 +33,6 @@ function Stage:new()
     self.area.world:addCollisionClass('EnemyProjectile', {ignores = {'EnemyProjectile', 'Projectile', 'Enemy'}})
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
-
-    input:bind('r', function()
-        self.area:addGameObject('Rock', utils.random(0, gw), utils.random(0, gh))
-    end)
 
     input:bind('1', function()
         self.player:setAttack("Neutral")
@@ -130,8 +125,9 @@ local function bar(x, y, w, h, color, current, max, font)
     love.graphics.setColor(r - 32, g - 32, b - 32)
     love.graphics.rectangle('line', x, y, w, h)
 
+    love.graphics.setFont(font)
     love.graphics.setColor(r, g, b)
-    love.graphics.print(current .. '/' .. max, x + 24, y - 10, 0, 0.5, 0.5,
+    love.graphics.print(current .. '/' .. max, x + 24, y - 10, 0, 1, 1,
         math.floor(font:getWidth(current .. '/' .. max)/2),
         math.floor(font:getHeight()/2))
 end
