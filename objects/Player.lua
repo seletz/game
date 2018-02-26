@@ -10,82 +10,98 @@ Player = GameObject:extend()
 
 local SHOOT_RATE = 0.25
 local TICK_RATE = 5
+local BOOST_RATE = 2
+
+local SHIP_SIZE = 12
+
+local FIGHTER_POLYS = {
+    {
+        SHIP_SIZE, 0, -- 1
+        SHIP_SIZE/2, -SHIP_SIZE/2, -- 2
+        -SHIP_SIZE/2, -SHIP_SIZE/2, -- 3
+        -SHIP_SIZE, 0, -- 4
+        -SHIP_SIZE/2, SHIP_SIZE/2, -- 5
+        SHIP_SIZE/2, SHIP_SIZE/2, -- 6
+    }, {
+        SHIP_SIZE/2, -SHIP_SIZE/2, -- 7
+        0, -SHIP_SIZE, -- 8
+        -SHIP_SIZE - SHIP_SIZE/2, -SHIP_SIZE, -- 9
+        -3*SHIP_SIZE/4, -SHIP_SIZE/4, -- 10
+        -SHIP_SIZE/2, -SHIP_SIZE/2, -- 11
+    }, {
+        SHIP_SIZE/2, SHIP_SIZE/2, -- 12
+        -SHIP_SIZE/2, SHIP_SIZE/2, -- 13
+        -3*SHIP_SIZE/4, SHIP_SIZE/4, -- 14
+        -SHIP_SIZE - SHIP_SIZE/2, SHIP_SIZE, -- 15
+        0, SHIP_SIZE, -- 16
+    }
+}
+local SHIP_POLYS = {
+    ["Fighter"] = FIGHTER_POLYS
+}
 
 function Player:new(area, x, y, opts)
     Player.super.new(self, area, x, y, opts)
 
     self.x, self.y = x, y
-    self.w, self.h = 12, 12
+    self.w, self.h = SHIP_SIZE, SHIP_SIZE
     self.collider = self.area.world:newCircleCollider(self.x, self.y, self.w)
     self.collider:setObject(self)
     self.collider:setCollisionClass('Player')
 
-    self.visible = true
+    -- The Ship
     self.ship = 'Fighter'
-    self.polygons = {}
+    self.polygons = SHIP_POLYS[self.ship]
 
-    self:setAttack('Double')
+    self:setAttack('Neutral')
 
-    if self.ship == 'Fighter' then
-        self.polygons[1] = {
-            self.w, 0, -- 1
-            self.w/2, -self.w/2, -- 2
-            -self.w/2, -self.w/2, -- 3
-            -self.w, 0, -- 4
-            -self.w/2, self.w/2, -- 5
-            self.w/2, self.w/2, -- 6
-        }
+    -- Timers
+    self.cycle_timer = 0
+    self.cycle_cooldown = TICK_RATE
 
-        self.polygons[2] = {
-            self.w/2, -self.w/2, -- 7
-            0, -self.w, -- 8
-            -self.w - self.w/2, -self.w, -- 9
-            -3*self.w/4, -self.w/4, -- 10
-            -self.w/2, -self.w/2, -- 11
-        }
+    self.shoot_timer = 0
+    self.shoot_cooldown = SHOOT_RATE
 
-        self.polygons[3] = {
-            self.w/2, self.w/2, -- 12
-            -self.w/2, self.w/2, -- 13
-            -3*self.w/4, self.w/4, -- 14
-            -self.w - self.w/2, self.w, -- 15
-            0, self.w, -- 16
-        }
-    end
+    self.boost_timer = 0
+    self.boost_cooldown = BOOST_RATE
 
+    -- Flags
+    self.can_boost = true
+    self.visible = true
+    self.invincible = false
+
+    -- Effects
+    self.trail_color = colors.trail_color
+    self:trailEffect()
+
+    -- Stats
+    self:setupStats()
+end
+
+function Player:setupStats()
+    -- Movement
     self.r = -math.pi/2
     self.rv = 1.66*math.pi
     self.v = 0
     self.base_max_v = 100
     self.max_v = self.base_max_v
     self.a = 100
-    self.trail_color = colors.trail_color
 
-
-    -- Effects
-    self:trailEffect()
-
-    -- Stats
-
-    self.cycle_timer = 0
-    self.cycle_cooldown = 5
-
-    self.invincible = false
-
-    self.shoot_timer = 0
-    self.shoot_cooldown = SHOOT_RATE
-
+    -- Boosting
     self.max_boost = 100
     self.boost = self.max_boost
-    self.can_boost = true
-    self.boost_timer = 0
-    self.boost_cooldown = 2
 
-    self.max_hp = 100
+    -- Hit Points
+    self.base_max_hp = 100
+    self.max_hp = self.base_max_hp
     self.hp = self.max_hp
 
-    self.max_ammo = 100
+    -- Ammunition
+    self.base_max_ammo = 100
+    self.max_ammo = self.base_max_ammo
     self.ammo = self.max_ammo
+
+    -- Multipliers
 end
 
 function Player:destroy()
