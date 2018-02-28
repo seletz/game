@@ -15,7 +15,7 @@ function Attack:new(area, x, y, opts)
     self.x = gw/2 + direction*(gw/2 + 48)
     self.y = utils.random(48, gh - 48)
 
-    self.font = opts.font or fonts.C64_Pro_STYLE
+    self.font = opts.font or GAME_FONT
     self.attack = opts.attack or "Double"
     self.color = game_state.attacks[self.attack].color
     self.abbr = game_state.attacks[self.attack].abbreviation

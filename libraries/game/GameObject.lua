@@ -44,8 +44,8 @@ function GameObject:draw()
 
 end
 
-function GameObject:__tostring()
-    return "GameObject( " .. self.id .. " @ " .. self.x .. ", " .. self.y .. " )"
-end
+--function GameObject:__tostring()
+    --return "GameObject( " .. self.id .. " @ " .. self.x .. ", " .. self.y  or 0 .. " )"
+--end
 
 return GameObject

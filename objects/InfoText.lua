@@ -11,8 +11,8 @@ InfoText = GameObject:extend()
 function InfoText:new(area, x, y, opts)
     InfoText.super.new(self, area, x, y, opts)
 
-    self.font = opts.font or fonts.C64_Pro_STYLE
-    self.size = opts.size or 24
+    self.font = opts.font or GAME_FONT
+    self.size = opts.size or FONT_SIZE
     self.color = opts.color or colors.default_color
     self.depth = 80
     self.characters = {}
@@ -91,8 +91,8 @@ function InfoText:draw()
         end
 
         love.graphics.setColor(self.foreground_colors[i] or self.color or colors.default_color)
-        love.graphics.print(self.characters[i], self.x + width, self.y,
-            0, 1, 1, 0, self.font:getHeight()/2)
+        love.graphics.print(self.characters[i], self.x + width, self.y)
+            --0, 1, 1, 0, self.font:getHeight()/2)
     end
 
     love.graphics.setColor(colors.default_color)

@@ -46,7 +46,7 @@ function utils.loadFonts()
         local _, fname, ext = utils.splitpath(file)
         if ext and string.match(ext, "ttf") then
             print("font: " .. fname)
-            fonts[utils.removeext(fname)] = love.graphics.newFont(file)
+            fonts[utils.removeext(fname)] = love.graphics.newFont(file, FONT_SIZE)
         end
     end
 

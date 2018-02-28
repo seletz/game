@@ -1,17 +1,20 @@
 ------------------------------------------------------------------------------
 -- LIBRARIES
-dbg = require 'libraries/mobdebug/mobdebug'
-Input = require 'libraries/input/Input'
-Object = require 'libraries/classic/classic'
-Timer = require 'libraries/hump/timer'
-Camera = require 'libraries/hump/camera'
-Vector = require 'libraries/hump/vector'
-Physics = require 'libraries/windfield'
-lurker = require 'libraries/lurker/lurker'
-Draft = require 'libraries/draft/draft'
-fn = require 'libraries/moses/moses'
+dbg         = require 'libraries/mobdebug/mobdebug'
+Input       = require 'libraries/input/Input'
+Object      = require 'libraries/classic/classic'
+Timer       = require 'libraries/hump/timer'
+Camera      = require 'libraries/hump/camera'
+Vector      = require 'libraries/hump/vector'
+Physics     = require 'libraries/windfield'
+lurker      = require 'libraries/lurker/lurker'
+Draft       = require 'libraries/draft/draft'
+fn          = require 'libraries/moses/moses'
+lume        = require 'libraries/lume/lume'
 
 require 'libraries/utf8/utf8'
+
+
 
 ------------------------------------------------------------------------------
 -- GAME LIBRARIES
@@ -24,9 +27,7 @@ colors          = require 'libraries/game/colors'
 
 ------------------------------------------------------------------------------
 -- GLOBALS
-camera = Camera()
-draft = Draft()
-timer = Timer()
+require 'libraries/game/globals'
 
 ------------------------------------------------------------------------------
 -- GLOBAL INITS
@@ -36,20 +37,6 @@ io.stdout:setvbuf("no")
 camera.smoother = Camera.smooth.damped(5)
 lurker.interval = 0.25
 
-game_state = {
-    current_room = nil,
-    flash_frames = nil,
-    slow_amount = 1,
-    attacks = {
-        ['Neutral']     = {cooldown = 0.24, ammo = 0, abbreviation = 'N', color = colors.default_color},
-        ['Double']      = {cooldown = 0.32, ammo = 2, abbreviation = '2', color = colors.ammo_color},
-        ['Triple']      = {cooldown = 0.32, ammo = 3, abbreviation = '3', color = colors.boost_color},
-        ['Rapid']       = {cooldown = 0.12, ammo = 1, abbreviation = 'R', color = colors.default_color },
-        ['Spread']      = {cooldown = 0.16, ammo = 1, abbreviation = 'RS', color = colors.default_color},
-        ['Back']        = {cooldown = 0.32, ammo = 2, abbreviation = 'Ba', color = colors.skill_point_color },
-        ['Side']        = {cooldown = 0.32, ammo = 2, abbreviation = 'Si', color = colors.boost_color}
-    },
-}
 
 ------------------------------------------------------------------------------
 -- FUNCTIONS
@@ -60,11 +47,6 @@ function resize(s)
 end
 
 function love.load()
-    local object_files = {}
-    utils.recursiveEnumerate('objects', object_files)
-    utils.requireFiles(object_files)
-
-    fonts = utils.loadFonts()
 
     -- this only works if initialized here . :??
     input = Input()
@@ -86,11 +68,14 @@ function love.load()
     end)
 
     love.graphics.setDefaultFilter("nearest")
+    love.graphics.setLineStyle("rough")
     resize(2)
     gotoRoom("Stage")
 end
 
 function love.update(dt)
+    -- require("libraries/lovebird/lovebird").update()
+
     local slow_amount = game_state.slow_amount
     local dt = dt * slow_amount
 
@@ -105,7 +90,6 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.setFont(fonts.ARCADECLASSIC)
     local flash_frames = game_state.flash_frames
     local current_room = game_state.current_room
 

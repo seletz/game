@@ -13,6 +13,7 @@ function Stats:new(name, base, max, multiplier, value)
     self.base = base or 100
     self.max = max or self.base
     self.multiplier = multiplier or 1
+    self.bonus = 0
 
     self:reset(value)
 end
@@ -43,7 +44,7 @@ function Stats:multiply(m)
 end
 
 function Stats:reset(value, f)
-    self.value = self.multiplier*(value or self.base)
+    self.value = self.multiplier*(self.bonus + (value or self.base))
 
     if self.value <= 0 and f then
         f(self)

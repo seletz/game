@@ -75,6 +75,20 @@ function Area:getAllGameObjectsThat(filter)
     return out
 end
 
+function Area:getAllGameObjectsOfType(types, f)
+    return self:getAllGameObjectsThat(function(go)
+        for _, tp in ipairs(types) do
+            if go:is(_G[tp]) then
+                if f then
+                    return f(go)
+                else
+                    return true
+                end
+            end
+        end
+    end)
+end
+
 function Area:addPhysicsWorld()
     self.world = Physics.newWorld(0, 0, true)
 end

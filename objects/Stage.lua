@@ -17,7 +17,7 @@ function Stage:new()
     self.director = Director(self)
     self.area:addPhysicsWorld()
 
-    self.font = fonts.C64_Pro_STYLE
+    self.font = GAME_FONT
 
     self.score = 0
     self.skill_points = 0
@@ -126,13 +126,13 @@ function Stage:draw()
 
     -- Score
     love.graphics.setColor(colors.default_color)
-    love.graphics.print(self.score, gw - 20, 10, 0, 1, 1,
-        math.floor(self.font:getWidth(self.score)/2), self.font:getHeight()/2)
+    love.graphics.print(self.score, gw - 20, 0) --, 0, 1, 1,
+        --math.floor(self.font:getWidth(self.score)/2), self.font:getHeight()/2)
 
     -- Skill Points
     love.graphics.setColor(colors.skill_point_color)
-    love.graphics.print(self.skill_points, 20, 10, 0, 1, 1,
-        math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
+    love.graphics.print(self.skill_points, 20, 0) --, 0, 1, 1,
+        --math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
 
     -- Hp
     gameui.bar(gw/2 - 52, gh - 16, 48, 4, colors.hp_color,
@@ -153,7 +153,9 @@ function Stage:draw()
         self.font)
 
     -- cycle
-    gameui.bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color, self.director.cycle_time*10, self.director.cycle_duration*10, self.font)
+    gameui.bar(gw/2 + 4, gh - 16, 48, 4, colors.default_color,
+        self.director.cycle_time*10, self.director.cycle_duration*10,
+        self.font)
 
 
     love.graphics.setColor(255, 255, 255)

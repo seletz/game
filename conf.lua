@@ -8,8 +8,8 @@
 
 gw = 480
 gh = 270
-sx = 1
-sy = 1
+sx = 2
+sy = 2
 
 function love.conf(t)
     t.identity = nil                   -- The name of the save directory (string)
