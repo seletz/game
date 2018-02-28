@@ -32,20 +32,22 @@ function Shooter:new(area, x, y, opts)
 
     self.hit_flash = false
     self.timer:every(utils.random(3, 5), function()
+
         self.area:addGameObject('PreAttackEffect',
             self.x + 1.4*self.w*math.cos(self.collider:getAngle()),
             self.y + 1.4*self.w*math.sin(self.collider:getAngle()),
             {shooter = self, color = colors.hp_color, duration = 1})
-        self.timer:after(1, function()
-            local current_room = game_state.current_room
 
-            self.area:addGameObject('EnemyProjectile',
-                self.x + 1.4*self.w*math.cos(self.collider:getAngle()),
-                self.y + 1.4*self.w*math.sin(self.collider:getAngle()),
-                {
-                    r = math.atan2(current_room.player.y - self.y, current_room.player.x - self.x),
-                    v = utils.random(80, 100), s = 3.5
-                })
+        self.timer:after(1, function()
+            withPlayer(function(player)
+                self.area:addGameObject('EnemyProjectile',
+                    self.x + 1.4*self.w*math.cos(self.collider:getAngle()),
+                    self.y + 1.4*self.w*math.sin(self.collider:getAngle()),
+                    {
+                        r = math.atan2(player.y - self.y, player.x - self.x),
+                        v = utils.random(80, 100), s = 3.5
+                    })
+            end)
         end)
     end)
 

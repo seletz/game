@@ -15,7 +15,11 @@ function Projectile:new(area, x, y, opts)
     self.v = opts.v or 200
 
     self.attack = opts.attack or 'Neutral'
-    self.color = game_state.attacks[self.attack].color
+    self.color = colors.default_color
+
+    withAttack(self.attack, function(attack)
+        self.color = attack.color
+    end)
 
     self.collider = self.area.world:newCircleCollider(self.x, self.y, self.s)
     self.collider:setCollisionClass('Projectile')
@@ -23,7 +27,6 @@ function Projectile:new(area, x, y, opts)
     self.collider:setLinearVelocity(self.v*math.cos(self.r), self.v*math.sin(self.r))
 
     -- stats
-
     self.damage = opts.damage or 100
 end
 

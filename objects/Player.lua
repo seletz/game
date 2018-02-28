@@ -171,7 +171,10 @@ function Player:shoot()
         end
     end
 
-    self:addAmmo(-game_state.attacks[self.attack].ammo)
+    withAttack(self.attack, function(attack)
+        self:addAmmo(-attack.ammo)
+    end)
+
 end
 
 function Player:tick()
@@ -184,7 +187,10 @@ function Player:die()
     camera:shake(6, 60, 0.4)
     slow(0.15, 1)
     self:brzzt()
-    game_state.current_room:finish()
+
+    withCurrentRoom(function(room)
+        room:finish()
+    end)
 end
 
 function Player:brzzt(a, b)
@@ -269,15 +275,17 @@ function Player:update(dt)
     if self.collider:enter('Collectable') then
         local collision_data = self.collider:getEnterCollisionData('Collectable')
         local object = collision_data.collider:getObject()
+        local score = 0
+        local skill_points = 0
         if object:is(Ammo) then
             object:die()
             self:addAmmo(5)
-            game_state.current_room:addScore(50)
+            score = 50
         end
         if object:is(Boost) then
             object:die()
             self:addBoost(25)
-            game_state.current_room:addScore(150)
+            score = 150
         end
         if object:is(HP) then
             object:die()
@@ -285,14 +293,18 @@ function Player:update(dt)
         end
         if object:is(SkillPoint) then
             object:die()
-            game_state.current_room:addScore(250)
-            game_state.current_room:addSkillPoint(1)
+            score = 250
+            skill_points = 1
         end
         if object:is(Attack) then
             self:setAttack(object.attack)
             object:die()
-            game_state.current_room:addScore(500)
+            score = 500
         end
+        withCurrentRoom(function(room)
+            room:addScore(score)
+            room:addSkillPoint(skill_points)
+        end)
     end
 
     if self.collider:enter('Enemy') then
@@ -302,9 +314,12 @@ end
 
 function Player:setAttack(attack)
     print("P: attack " .. attack)
-    local cooldown = game_state.attacks[attack].cooldown
-    self.shoot_timer = CooldownTimer(cooldown)
-    self.attack = attack
+
+    withState("attacks", function(attacks)
+        local cooldown = attacks[attack].cooldown
+        self.shoot_timer = CooldownTimer(cooldown)
+        self.attack = attack
+    end)
 end
 
 function Player:addAmmo(amount)

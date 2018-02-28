@@ -10,6 +10,12 @@ camera = Camera()
 draft = Draft()
 timer = Timer()
 
+
+-- no buffering for stdout please
+io.stdout:setvbuf("no")
+camera.smoother = Camera.smooth.damped(5)
+lurker.interval = 0.25
+
 FONT_SIZE = 18
 
 do
@@ -22,18 +28,86 @@ end
 
 GAME_FONT = fonts.SYDNIE_STANDARD
 
-game_state = {
-    current_room = nil,
-    flash_frames = nil,
-    slow_amount = 1,
-    attacks = {
-        ['Neutral']     = {cooldown = 0.24, ammo = 0, abbreviation = 'N', color = colors.default_color},
-        ['Double']      = {cooldown = 0.32, ammo = 2, abbreviation = '2', color = colors.ammo_color},
-        ['Triple']      = {cooldown = 0.32, ammo = 3, abbreviation = '3', color = colors.boost_color},
-        ['Rapid']       = {cooldown = 0.12, ammo = 1, abbreviation = 'R', color = colors.default_color },
-        ['Spread']      = {cooldown = 0.16, ammo = 1, abbreviation = 'RS', color = colors.default_color},
-        ['Back']        = {cooldown = 0.32, ammo = 2, abbreviation = 'Ba', color = colors.skill_point_color },
-        ['Side']        = {cooldown = 0.32, ammo = 2, abbreviation = 'Si', color = colors.boost_color}
-    },
-}
+------------------------------------------------------------------------------
+-- Game State
+state = require "libraries/game/state"
+
+
+------------------------------------------------------------------------------
+-- FUNCTIONS
+
+function resize(s)
+    love.window.setMode(s*gw, s*gh)
+    sx, sy = s, s
+end
+
+function flash(frames)
+    state.flash_frames = frames
+end
+
+function slow(amount, duration)
+    lume.trace("slow ", amount, "duration", duration)
+    state.slow_amount = amount
+    timer:tween(duration, state, {slow_amount = 1}, 'in-out-cubic')
+end
+
+function gotoRoom(room_type, ...)
+    local current_room = state.current_room
+    if current_room and current_room.destroy then current_room:destroy() end
+
+    state.current_room = _G[room_type](...)
+end
+
+function withCurrentTime(dt, f, ...)
+    local t = state.slow_amount * dt
+    return f(t, ...)
+end
+
+function withCurrentRoom(f, ...)
+    if state.current_room then
+        return f(state.current_room, ...)
+    end
+end
+
+function withState(key, f, ...)
+    local s = state[key]
+    if s then
+        return f(s, ...)
+    end
+end
+
+function withAttacks(f, ...)
+    return f(state.attacks, ...)
+end
+
+function withAttack(a, f, ...)
+    local attack = state.attacks[a]
+    if attack then
+        return f(attack, ...)
+    end
+end
+
+function withPlayer(f, ...)
+    return withCurrentRoom(function(room, ...)
+        if room.player then
+            return f(room.player, ...)
+        end
+    end)
+end
+
+function untilCounterZero(name, f, ...)
+    local counter = state[name]
+    local flag = true
+    if counter then
+        counter = counter - 1
+        if counter <= 0 then
+            flag = false
+            counter = nil
+        end
+        state[name] = counter
+        if flag then
+            return f(counter, ...)
+        end
+    end
+end
 

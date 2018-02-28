@@ -102,17 +102,17 @@ function Stage:addHPResource()
 end
 
 function Stage:addRandomAttackResource()
-    local attacks = {}
-    for k in pairs(game_state.attacks) do
-        table.insert(attacks, k)
-    end
+    withState("attacks", function(state)
+        local attacks = lume.keys(state)
+        local attack = lume.randomchoice(attacks)
 
-    local attack = attacks[math.random(#attacks)]
+        print("+"..attack)
 
-    print("+"..attack)
-    self.area:addGameObject("Attack", utils.random(0, gw), utils.random(0, gh), {
-        attack=attack
-    })
+        self.area:addGameObject("Attack", utils.random(0, gw), utils.random(0, gh), {
+            attack=attack
+        })
+
+    end)
 end
 
 function Stage:draw()
@@ -126,12 +126,12 @@ function Stage:draw()
 
     -- Score
     love.graphics.setColor(colors.default_color)
-    love.graphics.print(self.score, gw - 20, 0) --, 0, 1, 1,
+    love.graphics.print(self.score, gw - 80, 0) --, 0, 1, 1,
         --math.floor(self.font:getWidth(self.score)/2), self.font:getHeight()/2)
 
     -- Skill Points
     love.graphics.setColor(colors.skill_point_color)
-    love.graphics.print(self.skill_points, 20, 0) --, 0, 1, 1,
+    love.graphics.print(self.skill_points, 80, 0) --, 0, 1, 1,
         --math.floor(self.font:getWidth(self.skill_points)/2), self.font:getHeight()/2)
 
     -- Hp

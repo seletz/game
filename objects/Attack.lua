@@ -17,8 +17,13 @@ function Attack:new(area, x, y, opts)
 
     self.font = opts.font or GAME_FONT
     self.attack = opts.attack or "Double"
-    self.color = game_state.attacks[self.attack].color
-    self.abbr = game_state.attacks[self.attack].abbreviation
+    self.color = colors.default_color
+    self.abbr = "??"
+
+    withAttack(self.attack, function(attack)
+        self.color = attack.color
+        self.abbr = attack.abbreviation
+    end)
 
     self.w, self.h = 48, 48
     self.collider = self.area.world:newRectangleCollider(self.x, self.y, self.w, self.h)
