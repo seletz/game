@@ -48,6 +48,10 @@ function slow(amount, duration)
     timer:tween(duration, state, {slow_amount = 1}, 'in-out-cubic')
 end
 
+function getCurrentRoom()
+    return state.current_room
+end
+
 function gotoRoom(room_type, ...)
     local current_room = state.current_room
     if current_room and current_room.destroy then current_room:destroy() end
