@@ -1,18 +1,17 @@
 ------------------------------------------------------------------------------
 -- LIBRARIES
-dbg         = require 'libraries/mobdebug/mobdebug'
+--dbg         = require 'libraries/mobdebug/mobdebug'
 Input       = require 'libraries/input/Input'
 Object      = require 'libraries/classic/classic'
 Timer       = require 'libraries/hump/timer'
 Camera      = require 'libraries/hump/camera'
 Vector      = require 'libraries/hump/vector'
 Physics     = require 'libraries/windfield'
-lurker      = require 'libraries/lurker/lurker'
 Draft       = require 'libraries/draft/draft'
 fn          = require 'libraries/moses/moses'
 lume        = require 'libraries/lume/lume'
-
 require 'libraries/utf8/utf8'
+require 'libraries/lovedebug/lovedebug'
 
 ------------------------------------------------------------------------------
 -- GAME LIBRARIES
@@ -29,7 +28,6 @@ require 'libraries/game/globals'
 
 ------------------------------------------------------------------------------
 -- FUNCTIONS
-
 
 function love.load()
 
@@ -62,7 +60,7 @@ function love.update(dt)
     -- require("libraries/lovebird/lovebird").update()
 
     withCurrentTime(dt, function(t)
-        lurker.update()
+        --lurker.update()
         timer:update(t)
         camera:update(t)
     end)

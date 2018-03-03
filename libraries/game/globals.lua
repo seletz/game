@@ -14,7 +14,7 @@ timer = Timer()
 -- no buffering for stdout please
 io.stdout:setvbuf("no")
 camera.smoother = Camera.smooth.damped(5)
-lurker.interval = 0.25
+--lurker.interval = 0.25
 
 FONT_SIZE = 18
 
@@ -46,7 +46,6 @@ function flash(frames)
 end
 
 function slow(amount, duration)
-    lume.trace("slow ", amount, "duration", duration)
     state.slow_amount = amount
     timer:tween(duration, state, {slow_amount = 1}, 'in-out-cubic')
 end
