@@ -28,9 +28,21 @@ function Stage:new()
     -- Player will generate collision events with Collectable
     self.area.world:addCollisionClass('Player')
     self.area.world:addCollisionClass('Enemy')
-    self.area.world:addCollisionClass('Projectile', {ignores = {'Player', 'Projectile'}})
-    self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Projectile'}})
+    self.area.world:addCollisionClass('Projectile', {ignores = {'Projectile', 'Player'}})
     self.area.world:addCollisionClass('EnemyProjectile', {ignores = {'EnemyProjectile', 'Projectile', 'Enemy'}})
+    self.area.world:addCollisionClass('Collectable', {ignores = {'Collectable', 'Enemy', 'Projectile'}})
+
+    -- Apparently there's no way to alter the collision ignores using the windfield api. sigh.
+    do 
+        local collectable = self.area.world.collision_classes["Collectable"]
+        local enemyprojectile = self.area.world.collision_classes["EnemyProjectile"]
+
+        table.insert(collectable.ignores, "EnemyProjectile")
+        table.insert(enemyprojectile.ignores, "Collectable")
+
+        self.area.world:collisionClassesSet()
+    end
+
 
     self.player = self.area:addGameObject('Player', gw/2, gh/2)
 
