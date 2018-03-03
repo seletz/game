@@ -10,11 +10,9 @@ camera = Camera()
 draft = Draft()
 timer = Timer()
 
-
 -- no buffering for stdout please
 io.stdout:setvbuf("no")
 camera.smoother = Camera.smooth.damped(5)
---lurker.interval = 0.25
 
 FONT_SIZE = 18
 
