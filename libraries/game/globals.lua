@@ -10,11 +10,9 @@ camera = Camera()
 draft = Draft()
 timer = Timer()
 
-
 -- no buffering for stdout please
 io.stdout:setvbuf("no")
 camera.smoother = Camera.smooth.damped(5)
---lurker.interval = 0.25
 
 FONT_SIZE = 18
 
@@ -48,6 +46,10 @@ end
 function slow(amount, duration)
     state.slow_amount = amount
     timer:tween(duration, state, {slow_amount = 1}, 'in-out-cubic')
+end
+
+function getCurrentRoom()
+    return state.current_room
 end
 
 function gotoRoom(room_type, ...)
